@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Navbar from './Navbar';
+import React from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import FloatingDock from './FloatingDock';
+import MinimalTopBar from './MinimalTopBar';
 
 const Layout: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  // Check if we are in focus mode (e.g., active quiz)
+  const isFocusMode = location.pathname.includes('/quiz/') && !location.pathname.includes('/results');
+
+  if (isFocusMode) {
+    return (
+      <div className="workspace-layout">
+        <main className="main-content overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
+    );
+  }
 
   return (
-    <div className="page-container flex min-h-screen">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-      <div className="flex-1 flex flex-col min-h-screen lg:min-w-0">
-        <Navbar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
-
-        <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
-          <Outlet />
+    <div className="workspace-layout pl-[72px] md:pl-[72px]">
+      <FloatingDock />
+      <div className="flex-1 flex flex-col min-w-0 bg-primary-950 relative">
+        <MinimalTopBar />
+        <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
+          <div className="max-w-7xl mx-auto w-full animate-fade-in">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
