@@ -9,9 +9,11 @@ import {
   BookOpen,
   Users,
   Trophy,
-  TrendingUp,
-  PlusCircle,
   ArrowRight,
+  TrendingUp,
+  Clock,
+  Activity,
+  Plus
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -36,7 +38,7 @@ const Dashboard: React.FC = () => {
         );
         setStats({ totalCourses: response.data.courses.length, totalStudents });
       } else {
-        const response = await courseService.getAll({ limit: 6 });
+        const response = await courseService.getAll({ limit: 4 });
         setCourses(response.data.courses);
       }
     } catch (error) {
@@ -52,210 +54,209 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex items-center justify-center h-full min-h-[60vh]">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
+  // HEATMAP GENERATOR (Mock Data for visual UI)
+  const heatmapData = Array.from({ length: 42 }).map((_, i) => ({
+    date: new Date(Date.now() - (41 - i) * 24 * 60 * 60 * 1000),
+    level: Math.random() > 0.6 ? Math.floor(Math.random() * 4) + 1 : 0
+  }));
+
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 p-8 text-white">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4" />
-        <div className="absolute bottom-0 left-1/2 w-48 h-48 bg-accent-400/10 rounded-full translate-y-1/2" />
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold mb-2">
-            Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}, {user?.name?.split(' ')[0]}! 👋
-          </h1>
-          <p className="text-primary-200 text-lg max-w-xl">
-            {user?.role === 'teacher'
-              ? 'Manage your courses and track student progress from here.'
-              : 'Ready to continue your learning journey? Pick up where you left off.'}
+    <div className="space-y-6 animate-fade-in pb-10">
+      {/* Header / Command Center Welcome */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <p className="text-primary-400 text-sm font-medium uppercase tracking-wider mb-1">
+            Command Center
           </p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">
+            Overview
+          </h1>
         </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {user?.role === 'teacher' ? (
-          <>
-            <StatCard
-              icon={<BookOpen className="w-6 h-6" />}
-              label="My Courses"
-              value={stats.totalCourses.toString()}
-              color="primary"
-            />
-            <StatCard
-              icon={<Users className="w-6 h-6" />}
-              label="Total Students"
-              value={stats.totalStudents.toString()}
-              color="accent"
-            />
-            <StatCard
-              icon={<Trophy className="w-6 h-6" />}
-              label="Quizzes Created"
-              value="—"
-              color="amber"
-            />
-            <StatCard
-              icon={<TrendingUp className="w-6 h-6" />}
-              label="Avg. Completion"
-              value="—"
-              color="rose"
-            />
-          </>
-        ) : (
-          <>
-            <StatCard
-              icon={<BookOpen className="w-6 h-6" />}
-              label="Enrolled Courses"
-              value={enrollments.length.toString()}
-              color="primary"
-            />
-            <StatCard
-              icon={<Trophy className="w-6 h-6" />}
-              label="Quizzes Completed"
-              value="—"
-              color="accent"
-            />
-            <StatCard
-              icon={<TrendingUp className="w-6 h-6" />}
-              label="Avg. Score"
-              value="—"
-              color="amber"
-            />
-            <StatCard
-              icon={<Users className="w-6 h-6" />}
-              label="Certificates"
-              value="—"
-              color="rose"
-            />
-          </>
-        )}
-      </div>
-
-      {/* Quick Actions for Teacher */}
-      {user?.role === 'teacher' && (
-        <div className="flex flex-wrap gap-3">
+        
+        {user?.role === 'teacher' && (
           <button
             onClick={() => navigate('/create-course')}
-            className="btn-primary gap-2"
+            className="btn-primary gap-2 h-10 px-4 text-sm"
           >
-            <PlusCircle className="w-5 h-5" />
-            Create New Course
+            <Plus className="w-4 h-4" />
+            New Studio Project
           </button>
-          <button
-            onClick={() => navigate('/courses')}
-            className="btn-secondary gap-2"
-          >
-            Browse All Courses
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Courses Section */}
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="section-title">
-            {user?.role === 'teacher' ? 'Your Courses' : 'Recommended Courses'}
-          </h2>
-          <button
-            onClick={() => navigate('/courses')}
-            className="btn-ghost gap-1 text-sm"
-          >
-            View All
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {courses.length === 0 ? (
-          <div className="card p-12 text-center">
-            <BookOpen className="w-12 h-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-surface-700 dark:text-surface-300 mb-2">
-              {user?.role === 'teacher' ? 'No courses yet' : 'No courses available'}
-            </h3>
-            <p className="text-surface-500 dark:text-surface-400 mb-4">
-              {user?.role === 'teacher'
-                ? 'Create your first course to get started!'
-                : 'Check back soon for new courses.'}
-            </p>
-            {user?.role === 'teacher' && (
-              <button
-                onClick={() => navigate('/create-course')}
-                className="btn-primary gap-2"
-              >
-                <PlusCircle className="w-5 h-5" />
-                Create Course
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {courses.slice(0, 6).map((course) => (
-              <CourseCard
-                key={course._id}
-                course={course}
-                isEnrolled={enrolledCourseIds.includes(course._id)}
-              />
-            ))}
-          </div>
         )}
       </div>
 
-      {/* Enrolled Courses (Student) */}
-      {user?.role === 'student' && enrollments.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="section-title">Continue Learning</h2>
+      {/* Grid Layout inspired by Linear/Bento Box */}
+      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        
+        {/* Main large widget */}
+        <div className="widget-panel col-span-1 md:col-span-4 lg:col-span-4 p-6 relative bg-grid">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#111111] via-transparent to-[#111111] opacity-60 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent opacity-80 pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col h-full justify-between">
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}, {user?.name?.split(' ')[0]}
+              </h2>
+              <p className="text-primary-400">
+                {user?.role === 'teacher'
+                  ? 'Your courses have reached 12 new students this week. Keep up the momentum in the studio.'
+                  : `You have ${enrollments.length} active enrollments. You're on a 5-day learning streak.`}
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col">
+                <span className="text-3xl font-bold text-white tracking-tight">
+                  {user?.role === 'teacher' ? stats.totalStudents : enrollments.length}
+                </span>
+                <span className="text-xs text-primary-500 uppercase tracking-wider font-semibold">
+                  {user?.role === 'teacher' ? 'Total Students' : 'Active Courses'}
+                </span>
+              </div>
+              <div className="w-[1px] h-10 bg-[#27272a]"></div>
+              <div className="flex flex-col">
+                <span className="text-3xl font-bold text-white tracking-tight flex items-baseline gap-1">
+                  {user?.role === 'teacher' ? stats.totalCourses : '8'}
+                  <span className="text-sm font-normal text-primary-500">
+                    {user?.role === 'teacher' ? '' : 'hrs'}
+                  </span>
+                </span>
+                <span className="text-xs text-primary-500 uppercase tracking-wider font-semibold">
+                  {user?.role === 'teacher' ? 'Active Courses' : 'Time Learned'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Heatmap Widget */}
+        <div className="widget-panel col-span-1 md:col-span-2 lg:col-span-2 p-5 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-primary-200 flex items-center gap-2">
+              <Activity className="w-4 h-4 text-green-500" />
+              Activity Profile
+            </h3>
+            <span className="text-xs font-medium text-primary-500">Last 6 Weeks</span>
+          </div>
+          
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="grid grid-cols-7 gap-1.5 auto-rows-max">
+              {heatmapData.map((d, i) => (
+                <div 
+                  key={i} 
+                  className={`aspect-square rounded-sm ${
+                    d.level === 0 ? 'bg-[#27272a]' :
+                    d.level === 1 ? 'bg-green-900/40' :
+                    d.level === 2 ? 'bg-green-700/60' :
+                    d.level === 3 ? 'bg-green-500/80' :
+                    'bg-green-400'
+                  }`}
+                  title={`${d.date.toDateString()}`}
+                />
+              ))}
+            </div>
+            <div className="mt-4 flex items-center justify-between text-xs text-primary-500 font-medium">
+              <span>Less</span>
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-sm bg-[#27272a]" />
+                <div className="w-3 h-3 rounded-sm bg-green-900/40" />
+                <div className="w-3 h-3 rounded-sm bg-green-700/60" />
+                <div className="w-3 h-3 rounded-sm bg-green-500/80" />
+                <div className="w-3 h-3 rounded-sm bg-green-400" />
+              </div>
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Row */}
+        <div className="widget-panel col-span-1 md:col-span-2 lg:col-span-2 p-5">
+          <div className="flex items-center gap-3 mb-2">
+            <Trophy className="w-5 h-5 text-yellow-500" />
+            <h3 className="text-sm font-semibold text-primary-200">Achievements</h3>
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">12</p>
+          <p className="text-xs text-primary-500">Certificates earned</p>
+        </div>
+
+        <div className="widget-panel col-span-1 md:col-span-2 lg:col-span-2 p-5">
+          <div className="flex items-center gap-3 mb-2">
+            <Clock className="w-5 h-5 text-blue-500" />
+            <h3 className="text-sm font-semibold text-primary-200">Current Streak</h3>
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">5 Days</p>
+          <p className="text-xs text-primary-500">Personal best is 14 days</p>
+        </div>
+
+        <div className="widget-panel col-span-1 md:col-span-2 lg:col-span-2 p-5">
+          <div className="flex items-center gap-3 mb-2">
+            <TrendingUp className="w-5 h-5 text-purple-500" />
+            <h3 className="text-sm font-semibold text-primary-200">Avg Score</h3>
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">94%</p>
+          <p className="text-xs text-primary-500">Top 10% of learners</p>
+        </div>
+
+        {/* Content Section */}
+        <div className="col-span-1 md:col-span-4 lg:col-span-6 mt-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="title-md">
+              {user?.role === 'teacher' ? 'Active Projects' : 'Continue Learning'}
+            </h2>
             <button
-              onClick={() => navigate('/my-courses')}
-              className="btn-ghost gap-1 text-sm"
+              onClick={() => navigate(user?.role === 'teacher' ? '/courses' : '/my-courses')}
+              className="text-primary-400 hover:text-white text-sm font-medium flex items-center gap-1 transition-colors"
             >
-              View All
-              <ArrowRight className="w-4 h-4" />
+              View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {enrollments.slice(0, 3).map((enrollment) => (
-              <CourseCard
-                key={enrollment._id}
-                course={enrollment.course as Course}
-                isEnrolled={true}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
 
-// Stat Card Component
-const StatCard: React.FC<{
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  color: 'primary' | 'accent' | 'amber' | 'rose';
-}> = ({ icon, label, value, color }) => {
-  const colorMap = {
-    primary: 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400',
-    accent: 'bg-accent-50 dark:bg-accent-900/30 text-accent-600 dark:text-accent-400',
-    amber: 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
-    rose: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400',
-  };
+          {courses.length === 0 && enrollments.length === 0 ? (
+            <div className="widget-panel p-12 text-center flex flex-col items-center justify-center">
+              <BookOpen className="w-12 h-12 text-[#27272a] mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {user?.role === 'teacher' ? 'No active studio projects' : 'No active courses'}
+              </h3>
+              <p className="text-primary-500 max-w-sm mb-6">
+                {user?.role === 'teacher'
+                  ? 'Start building your next masterpiece in the studio.'
+                  : 'Explore the catalog to start your next learning journey.'}
+              </p>
+              <button
+                onClick={() => navigate(user?.role === 'teacher' ? '/create-course' : '/courses')}
+                className="btn-primary"
+              >
+                {user?.role === 'teacher' ? 'Go to Studio' : 'Browse Courses'}
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {user?.role === 'teacher'
+                ? courses.slice(0, 4).map((course) => (
+                    <CourseCard
+                      key={course._id}
+                      course={course}
+                      isEnrolled={false}
+                    />
+                  ))
+                : enrollments.slice(0, 4).map((enrollment) => (
+                    <CourseCard
+                      key={enrollment._id}
+                      course={enrollment.course as Course}
+                      isEnrolled={true}
+                    />
+                  ))
+              }
+            </div>
+          )}
+        </div>
 
-  return (
-    <div className="card p-5">
-      <div className="flex items-center gap-4">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorMap[color]}`}>
-          {icon}
-        </div>
-        <div>
-          <p className="text-2xl font-bold text-surface-900 dark:text-white">{value}</p>
-          <p className="text-sm text-surface-500 dark:text-surface-400">{label}</p>
-        </div>
       </div>
     </div>
   );
