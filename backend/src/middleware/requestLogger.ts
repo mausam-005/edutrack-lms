@@ -1,0 +1,30 @@
+import { Request, Response, NextFunction } from 'express';
+import { Logger } from '../utils/Logger';
+
+const logger = Logger.createLogger('HTTP');
+
+/**
+ * Request Logger Middleware
+ * 
+ * SRP: Only responsible for logging incoming HTTP requests.
+ * Logs: method, URL, status code, and response time.
+ */
+export const requestLogger = (req: Request, res: Response, next: NextFunction): void => {
+  const start = Date.now();
+
+  // Log after response is sent
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const message = `${req.method} ${req.originalUrl} → ${res.statusCode} (${duration}ms)`;
+
+    if (res.statusCode >= 500) {
+      logger.error(message);
+    } else if (res.statusCode >= 400) {
+      logger.warn(message);
+    } else {
+      logger.info(message);
+    }
+  });
+
+  next();
+};
