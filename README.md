@@ -46,7 +46,7 @@ edutrack-lms/
 └── .env.example
 ```
 
-## 🏁 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -91,15 +91,15 @@ npm run seed
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| POST | /api/auth/register | ❌ | Register user |
-| POST | /api/auth/login | ❌ | Login |
-| GET | /api/auth/me | ✅ | Get profile |
-| GET | /api/courses | ✅ | List courses (paginated) |
-| POST | /api/courses | ✅ Teacher | Create course |
-| GET | /api/courses/:id | ✅ | Course details |
-| POST | /api/enrollments/courses/:id/enroll | ✅ Student | Enroll |
-| POST | /api/quizzes/:id/attempt | ✅ Student | Submit quiz |
-| GET | /api/quizzes/:id/results | ✅ | View results |
+| POST | /api/auth/register |  | Register user |
+| POST | /api/auth/login |  | Login |
+| GET | /api/auth/me |  | Get profile |
+| GET | /api/courses |  | List courses (paginated) |
+| POST | /api/courses |  Teacher | Create course |
+| GET | /api/courses/:id |  | Course details |
+| POST | /api/enrollments/courses/:id/enroll |  Student | Enroll |
+| POST | /api/quizzes/:id/attempt |  Student | Submit quiz |
+| GET | /api/quizzes/:id/results | | View results |
 
 ## 🎨 Design Patterns
 
