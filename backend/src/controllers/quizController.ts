@@ -2,11 +2,6 @@ import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { container } from '../config/container';
 import { ApiResponse } from '../utils/ApiResponse';
-
-/**
- * QuizController — HTTP Layer for Quizzes
- * SRP: Only handles HTTP request/response. Business logic in QuizService.
- */
 export class QuizController {
   static async create(req: AuthRequest, res: Response, next: NextFunction) {
     try {
@@ -20,7 +15,6 @@ export class QuizController {
       next(error);
     }
   }
-
   static async getByCourse(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const quizzes = await container.quizService.getByCourse(req.params.id);
@@ -29,7 +23,6 @@ export class QuizController {
       next(error);
     }
   }
-
   static async getById(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const quiz = await container.quizService.getById(req.params.id);
@@ -38,7 +31,6 @@ export class QuizController {
       next(error);
     }
   }
-
   static async attempt(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const result = await container.quizService.attempt(
@@ -51,7 +43,6 @@ export class QuizController {
       next(error);
     }
   }
-
   static async getResults(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const results = await container.quizService.getResults(
@@ -64,7 +55,6 @@ export class QuizController {
       next(error);
     }
   }
-
   static async getMyResults(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const results = await container.quizService.getStudentResults(

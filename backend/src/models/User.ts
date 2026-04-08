@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -9,7 +8,6 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
-
 const userSchema = new Schema<IUser>(
   {
     name: {
@@ -31,7 +29,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters'],
-      select: false, // Don't return password by default
+      select: false,
     },
     role: {
       type: String,
@@ -47,5 +45,4 @@ const userSchema = new Schema<IUser>(
     timestamps: true,
   }
 );
-
 export const User = mongoose.model<IUser>('User', userSchema);

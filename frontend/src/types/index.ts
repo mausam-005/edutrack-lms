@@ -7,7 +7,6 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
-
 export interface Course {
   _id: string;
   title: string;
@@ -19,7 +18,6 @@ export interface Course {
   createdAt: string;
   updatedAt: string;
 }
-
 export interface Enrollment {
   _id: string;
   student: User;
@@ -27,7 +25,6 @@ export interface Enrollment {
   enrolledAt: string;
   progress: number;
 }
-
 export interface Material {
   _id: string;
   course: string;
@@ -37,13 +34,11 @@ export interface Material {
   order: number;
   createdAt: string;
 }
-
 export interface Question {
   questionText: string;
   options: string[];
   correctAnswer: number;
 }
-
 export interface Quiz {
   _id: string;
   course: string;
@@ -52,7 +47,6 @@ export interface Quiz {
   duration: number;
   createdAt: string;
 }
-
 export interface QuizResult {
   _id: string;
   student: User | string;
@@ -63,25 +57,21 @@ export interface QuizResult {
   totalQuestions: number;
   submittedAt: string;
 }
-
 export interface ApiResponse<T> {
   success: boolean;
   message?: string;
   data: T;
 }
-
 export interface PaginationInfo {
   page: number;
   limit: number;
   total: number;
   pages: number;
 }
-
 export interface CoursesResponse {
   courses: Course[];
   pagination: PaginationInfo;
 }
-
 export interface AuthResponse {
   user: User;
   token: string;

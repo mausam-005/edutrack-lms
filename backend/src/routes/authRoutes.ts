@@ -3,9 +3,7 @@ import { body } from 'express-validator';
 import { AuthController } from '../controllers/authController';
 import { authenticate } from '../middleware/auth';
 import { validate } from '../middleware/validate';
-
 const router = Router();
-
 router.post(
   '/register',
   validate([
@@ -21,7 +19,6 @@ router.post(
   ]),
   AuthController.register
 );
-
 router.post(
   '/login',
   validate([
@@ -30,7 +27,5 @@ router.post(
   ]),
   AuthController.login
 );
-
 router.get('/me', authenticate, AuthController.getProfile);
-
 export default router;

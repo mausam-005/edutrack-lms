@@ -2,12 +2,9 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import FloatingDock from './FloatingDock';
 import MinimalTopBar from './MinimalTopBar';
-
 const Layout: React.FC = () => {
   const location = useLocation();
-  // Check if we are in focus mode (e.g., active quiz)
   const isFocusMode = location.pathname.includes('/quiz/') && !location.pathname.includes('/results');
-
   if (isFocusMode) {
     return (
       <div className="workspace-layout">
@@ -17,7 +14,6 @@ const Layout: React.FC = () => {
       </div>
     );
   }
-
   return (
     <div className="workspace-layout pl-[72px] md:pl-[72px]">
       <FloatingDock />
@@ -32,5 +28,4 @@ const Layout: React.FC = () => {
     </div>
   );
 };
-
 export default Layout;

@@ -2,28 +2,23 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, LayoutDashboard, BookOpen, GraduationCap, ArrowRight } from 'lucide-react';
 import classNames from 'classnames';
-
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
 const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-
   const commands = [
     { title: 'Go to Workspace', icon: LayoutDashboard, path: '/dashboard', category: 'Navigation' },
     { title: 'Browse Courses', icon: BookOpen, path: '/courses', category: 'Navigation' },
     { title: 'My Learning', icon: GraduationCap, path: '/my-courses', category: 'Navigation' },
   ];
-
-  const filteredCommands = query === '' 
-    ? commands 
+  const filteredCommands = query === ''
+    ? commands
     : commands.filter(cmd => cmd.title.toLowerCase().includes(query.toLowerCase()));
-
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 10);
@@ -34,11 +29,9 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
       setActiveIndex(0);
     }
   }, [isOpen]);
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      
       switch (e.key) {
         case 'Escape':
           e.preventDefault();
@@ -63,25 +56,21 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, filteredCommands, activeIndex, onClose]);
-
   const handleSelect = (path: string) => {
     navigate(path);
     onClose();
   };
-
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
-      {/* Backdrop */}
-      <div 
+      {}
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
-      
-      {/* Modal */}
+      {}
       <div className="relative w-full max-w-xl bg-[#111111] rounded-xl shadow-palette border border-[#27272a] overflow-hidden animate-command-enter">
-        {/* Input */}
+        {}
         <div className="flex items-center px-4 border-b border-[#27272a]">
           <Search className="w-5 h-5 text-primary-400 shrink-0" />
           <input
@@ -99,8 +88,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
             ESC
           </kbd>
         </div>
-
-        {/* Results */}
+        {}
         <div className="max-h-[60vh] overflow-y-auto p-2">
           {filteredCommands.length === 0 ? (
             <div className="p-4 text-center text-primary-500 text-sm">
@@ -134,8 +122,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
             </div>
           )}
         </div>
-        
-        {/* Footer */}
+        {}
         <div className="px-4 py-3 bg-[#09090b] border-t border-[#27272a] flex items-center justify-between text-xs text-primary-500">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
@@ -153,5 +140,4 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
     </div>
   );
 };
-
 export default CommandPalette;

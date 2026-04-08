@@ -1,24 +1,5 @@
 import { Response } from 'express';
-
-/**
- * ApiResponse — Standardized API Response Builder
- * 
- * SRP: This class is solely responsible for formatting API responses.
- * Ensures consistent response structure across the entire API.
- * 
- * Response format:
- * {
- *   success: boolean,
- *   message?: string,
- *   data?: any,
- *   error?: { code: string, details?: any },
- *   meta?: { timestamp: string, requestId?: string }
- * }
- */
 export class ApiResponse {
-  /**
-   * Send a success response
-   */
   static success(
     res: Response,
     data: any = null,
@@ -34,10 +15,6 @@ export class ApiResponse {
       },
     });
   }
-
-  /**
-   * Send a created response (201)
-   */
   static created(
     res: Response,
     data: any,
@@ -45,10 +22,6 @@ export class ApiResponse {
   ): Response {
     return ApiResponse.success(res, data, message, 201);
   }
-
-  /**
-   * Send an error response
-   */
   static error(
     res: Response,
     message: string = 'Something went wrong',
@@ -68,10 +41,6 @@ export class ApiResponse {
       },
     });
   }
-
-  /**
-   * Send a paginated response
-   */
   static paginated(
     res: Response,
     data: any[],
@@ -88,10 +57,6 @@ export class ApiResponse {
       },
     });
   }
-
-  /**
-   * Send a no-content response (204)
-   */
   static noContent(res: Response): Response {
     return res.status(204).send();
   }

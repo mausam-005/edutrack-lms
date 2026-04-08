@@ -2,18 +2,15 @@ import React from 'react';
 import { Menu, Bell } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle';
 import { useAuth } from '../../context/AuthContext';
-
 interface NavbarProps {
   onMenuToggle: () => void;
 }
-
 const Navbar: React.FC<NavbarProps> = ({ onMenuToggle }) => {
   const { user } = useAuth();
-
   return (
     <header className="sticky top-0 z-30 bg-white/80 dark:bg-surface-900/80 backdrop-blur-xl border-b border-surface-200/50 dark:border-surface-700/50">
       <div className="flex items-center justify-between px-4 lg:px-8 h-16">
-        {/* Left */}
+        {}
         <div className="flex items-center gap-4">
           <button
             onClick={onMenuToggle}
@@ -30,8 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuToggle }) => {
             </p>
           </div>
         </div>
-
-        {/* Right */}
+        {}
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <button className="relative p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors">
@@ -46,5 +42,4 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuToggle }) => {
     </header>
   );
 };
-
 export default Navbar;

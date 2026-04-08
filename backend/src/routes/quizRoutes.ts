@@ -4,17 +4,12 @@ import { QuizController } from '../controllers/quizController';
 import { authenticate } from '../middleware/auth';
 import { roleGuard } from '../middleware/roleGuard';
 import { validate } from '../middleware/validate';
-
 const router = Router();
-
-// Get course quizzes
 router.get(
   '/courses/:id/quizzes',
   authenticate,
   QuizController.getByCourse
 );
-
-// Create quiz (teacher only)
 router.post(
   '/courses/:id/quizzes',
   authenticate,
@@ -37,8 +32,6 @@ router.post(
   ]),
   QuizController.create
 );
-
-// Attempt quiz (student only)
 router.post(
   '/:id/attempt',
   authenticate,
@@ -50,19 +43,12 @@ router.post(
   ]),
   QuizController.attempt
 );
-
-// Get single quiz by ID
 router.get('/:id', authenticate, QuizController.getById);
-
-// Get quiz results
 router.get('/:id/results', authenticate, QuizController.getResults);
-
-// Get all my results (student)
 router.get(
   '/my/results',
   authenticate,
   roleGuard('student'),
   QuizController.getMyResults
 );
-
 export default router;

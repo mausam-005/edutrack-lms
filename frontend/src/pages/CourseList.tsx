@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import CourseCard from '../components/CourseCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { Search, Filter, ChevronLeft, ChevronRight, Compass } from 'lucide-react';
-
 const CourseList: React.FC = () => {
   const { enrollments } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
@@ -15,15 +14,12 @@ const CourseList: React.FC = () => {
   const [category, setCategory] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
   const [page, setPage] = useState(1);
-
   useEffect(() => {
     loadCategories();
   }, []);
-
   useEffect(() => {
     loadCourses();
   }, [page, category]);
-
   const loadCategories = async () => {
     try {
       const response = await courseService.getCategories();
@@ -32,14 +28,12 @@ const CourseList: React.FC = () => {
       console.error('Failed to load categories:', error);
     }
   };
-
   const loadCourses = async () => {
     setLoading(true);
     try {
       const params: any = { page, limit: 12 };
       if (search) params.search = search;
       if (category) params.category = category;
-
       const response = await courseService.getAll(params);
       setCourses(response.data.courses);
       setPagination(response.data.pagination);
@@ -49,20 +43,17 @@ const CourseList: React.FC = () => {
       setLoading(false);
     }
   };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1);
     loadCourses();
   };
-
   const enrolledCourseIds = enrollments.map((e) =>
     typeof e.course === 'object' ? e.course._id : e.course
   );
-
   return (
     <div className="space-y-8 animate-fade-in pb-12">
-      {/* Header */}
+      {}
       <div className="flex items-center gap-3 mb-2">
         <Compass className="w-8 h-8 text-blue-500" />
         <h1 className="text-4xl font-extrabold text-white tracking-tight">
@@ -72,8 +63,7 @@ const CourseList: React.FC = () => {
       <p className="text-primary-400 text-lg mb-8 max-w-2xl">
         Discover highly curated learning paths and projects prepared by top experts in their respective fields.
       </p>
-
-      {/* Search & Filter Command Bar */}
+      {}
       <div className="bg-[#111111] border border-[#27272a] p-2 rounded-xl flex flex-col md:flex-row gap-2 shadow-widget w-full md:w-3/4 lg:w-2/3">
         <form onSubmit={handleSearch} className="flex-1 relative flex items-center">
           <Search className="absolute left-4 w-5 h-5 text-primary-500" />
@@ -85,9 +75,7 @@ const CourseList: React.FC = () => {
             className="w-full bg-transparent border-none text-white pl-12 pr-4 py-3 placeholder:text-primary-600 focus:outline-none focus:ring-0 font-medium"
           />
         </form>
-        
         <div className="w-px bg-[#27272a] mx-2 hidden md:block" />
-
         <div className="relative flex items-center">
           <Filter className="absolute left-4 w-4 h-4 text-primary-500" />
           <select
@@ -106,7 +94,6 @@ const CourseList: React.FC = () => {
             ))}
           </select>
         </div>
-
         <button
           onClick={handleSearch}
           className="bg-white text-black px-6 py-2 rounded-lg font-bold hover:bg-primary-200 transition-colors shrink-0"
@@ -114,7 +101,6 @@ const CourseList: React.FC = () => {
           Search
         </button>
       </div>
-
       {loading ? (
         <div className="flex items-center justify-center h-[40vh]">
           <LoadingSpinner size="lg" />
@@ -134,7 +120,6 @@ const CourseList: React.FC = () => {
               Showing {courses.length} of {pagination.total} results
             </p>
           )}
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {courses.map((course) => (
               <CourseCard
@@ -144,7 +129,6 @@ const CourseList: React.FC = () => {
               />
             ))}
           </div>
-          
           {/* Default Dark Pagination */}
           {pagination && pagination.pages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-12">
@@ -182,5 +166,4 @@ const CourseList: React.FC = () => {
     </div>
   );
 };
-
 export default CourseList;

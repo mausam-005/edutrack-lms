@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
 export interface IMaterial extends Document {
   course: mongoose.Types.ObjectId;
   title: string;
@@ -8,7 +7,6 @@ export interface IMaterial extends Document {
   order: number;
   createdAt: Date;
 }
-
 const materialSchema = new Schema<IMaterial>(
   {
     course: {
@@ -39,7 +37,5 @@ const materialSchema = new Schema<IMaterial>(
     timestamps: true,
   }
 );
-
 materialSchema.index({ course: 1, order: 1 });
-
 export const Material = mongoose.model<IMaterial>('Material', materialSchema);

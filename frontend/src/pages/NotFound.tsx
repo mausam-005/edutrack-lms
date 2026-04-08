@@ -1,10 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home } from 'lucide-react';
-
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
-
   return (
     <div className="min-h-screen flex items-center justify-center page-container">
       <div className="text-center">
@@ -23,5 +21,4 @@ const NotFound: React.FC = () => {
     </div>
   );
 };
-
 export default NotFound;

@@ -5,16 +5,13 @@ import { Course } from '../types';
 import CourseCard from '../components/CourseCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { BookOpen, GraduationCap } from 'lucide-react';
-
 const MyCourses: React.FC = () => {
   const { user, enrollments } = useAuth();
   const [teacherCourses, setTeacherCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     loadCourses();
   }, [user]);
-
   const loadCourses = async () => {
     try {
       if (user?.role === 'teacher') {
@@ -27,7 +24,6 @@ const MyCourses: React.FC = () => {
       setLoading(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -35,12 +31,10 @@ const MyCourses: React.FC = () => {
       </div>
     );
   }
-
   const isStudent = user?.role === 'student';
   const courses = isStudent
     ? enrollments.map((e) => e.course as Course).filter(Boolean)
     : teacherCourses;
-
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
@@ -53,7 +47,6 @@ const MyCourses: React.FC = () => {
             : `You have created ${courses.length} course(s)`}
         </p>
       </div>
-
       {courses.length === 0 ? (
         <div className="card p-12 text-center">
           {isStudent ? (
@@ -80,5 +73,4 @@ const MyCourses: React.FC = () => {
     </div>
   );
 };
-
 export default MyCourses;

@@ -5,17 +5,14 @@ import { quizService } from '../services/quizService';
 import { QuizResult } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ArrowLeft, Trophy, CheckCircle2, XCircle } from 'lucide-react';
-
 const MyResults: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [results, setResults] = useState<QuizResult[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     loadResults();
   }, [user]);
-
   const loadResults = async () => {
     try {
       const response = await quizService.getMyResults();
@@ -26,7 +23,6 @@ const MyResults: React.FC = () => {
       setLoading(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -34,7 +30,6 @@ const MyResults: React.FC = () => {
       </div>
     );
   }
-
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
       <div>
@@ -45,7 +40,6 @@ const MyResults: React.FC = () => {
           Track your quiz performance here
         </p>
       </div>
-
       {results.length === 0 ? (
         <div className="card p-12 text-center">
           <Trophy className="w-12 h-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
@@ -63,7 +57,6 @@ const MyResults: React.FC = () => {
               (result.score / result.totalQuestions) * 100
             );
             const passed = percentage >= 60;
-
             return (
               <div key={result._id} className="card p-5 flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
@@ -102,5 +95,4 @@ const MyResults: React.FC = () => {
     </div>
   );
 };
-
 export default MyResults;

@@ -4,17 +4,14 @@ import { quizService } from '../services/quizService';
 import { QuizResult } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ArrowLeft, Trophy, Users } from 'lucide-react';
-
 const QuizResults: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [results, setResults] = useState<QuizResult[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     loadResults();
   }, [id]);
-
   const loadResults = async () => {
     if (!id) return;
     try {
@@ -26,7 +23,6 @@ const QuizResults: React.FC = () => {
       setLoading(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -34,14 +30,12 @@ const QuizResults: React.FC = () => {
       </div>
     );
   }
-
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
       <button onClick={() => navigate(-1)} className="btn-ghost gap-2 -ml-2">
         <ArrowLeft className="w-4 h-4" />
         Back
       </button>
-
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Quiz Results</h1>
@@ -51,7 +45,6 @@ const QuizResults: React.FC = () => {
           <Trophy className="w-6 h-6" />
         </div>
       </div>
-
       {results.length === 0 ? (
         <div className="card p-12 text-center">
           <Users className="w-12 h-12 text-surface-300 mx-auto mb-4" />
@@ -67,7 +60,6 @@ const QuizResults: React.FC = () => {
               (result.score / result.totalQuestions) * 100
             );
             const passed = percentage >= 60;
-
             return (
               <div key={result._id} className="card p-5 flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
@@ -107,5 +99,4 @@ const QuizResults: React.FC = () => {
     </div>
   );
 };
-
 export default QuizResults;

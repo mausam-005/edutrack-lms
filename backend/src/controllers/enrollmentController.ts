@@ -2,11 +2,6 @@ import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { container } from '../config/container';
 import { ApiResponse } from '../utils/ApiResponse';
-
-/**
- * EnrollmentController — HTTP Layer for Enrollments
- * SRP: Only handles HTTP request/response. Business logic in EnrollmentService.
- */
 export class EnrollmentController {
   static async enroll(req: AuthRequest, res: Response, next: NextFunction) {
     try {
@@ -19,7 +14,6 @@ export class EnrollmentController {
       next(error);
     }
   }
-
   static async getMyEnrollments(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const enrollments = await container.enrollmentService.getMyEnrollments(
@@ -30,7 +24,6 @@ export class EnrollmentController {
       next(error);
     }
   }
-
   static async getCourseEnrollments(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const enrollments = await container.enrollmentService.getCourseEnrollments(
@@ -42,7 +35,6 @@ export class EnrollmentController {
       next(error);
     }
   }
-
   static async checkEnrollment(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const isEnrolled = await container.enrollmentService.isEnrolled(

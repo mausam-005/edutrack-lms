@@ -6,7 +6,6 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import toast from 'react-hot-toast';
 import { ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import classNames from 'classnames';
-
 const QuizPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -17,15 +16,12 @@ const QuizPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState(0);
-
   useEffect(() => {
     loadQuiz();
   }, [id]);
-
   useEffect(() => {
     if (!quiz || result) return;
     setTimeLeft(quiz.duration * 60);
-
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -36,10 +32,8 @@ const QuizPage: React.FC = () => {
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
   }, [quiz, result]);
-
   const loadQuiz = async () => {
     if (!id) return;
     try {
@@ -47,8 +41,7 @@ const QuizPage: React.FC = () => {
       if (resultsRes.data.results.length > 0) {
         setResult(resultsRes.data.results[0]);
       }
-    } catch { /* ignore */ }
-
+    } catch {  }
     try {
       const quizRes = await quizService.getById(id);
       const fetchedQuiz = quizRes.data.quiz;
@@ -60,17 +53,14 @@ const QuizPage: React.FC = () => {
       setLoading(false);
     }
   };
-
   const handleSelectAnswer = (optionIndex: number) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = optionIndex;
     setAnswers(newAnswers);
   };
-
   const handleSubmit = async () => {
     if (!id || !quiz) return;
     const finalAnswers = answers.map((a) => (a === -1 ? 0 : a));
-
     setSubmitting(true);
     try {
       const response = await quizService.attempt(id, finalAnswers);
@@ -87,38 +77,29 @@ const QuizPage: React.FC = () => {
       setSubmitting(false);
     }
   };
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-
   if (loading) return <div className="flex justify-center items-center h-screen bg-[#09090b]"><LoadingSpinner size="lg" /></div>;
   if (!quiz) return <div className="text-center py-20 text-white">Assessment not found</div>;
-
-  // -- RESULTS VIEW --
   if (result) {
     const percentage = Math.round((result.score / result.totalQuestions) * 100);
     const passed = percentage >= 60;
-
     return (
       <div className="min-h-screen bg-[#09090b] text-white flex flex-col items-center justify-center p-6">
         <div className="max-w-2xl w-full">
           <button onClick={() => navigate(-1)} className="text-primary-500 hover:text-white flex items-center gap-2 mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Project
           </button>
-          
           <div className="bg-[#111111] border border-[#27272a] rounded-2xl p-10 text-center relative overflow-hidden">
              <div className={`absolute top-0 left-0 w-full h-1 ${passed ? 'bg-green-500' : 'bg-red-500'}`} />
-             
              <div className="flex justify-center mb-6">
                {passed ? <CheckCircle2 className="w-16 h-16 text-green-500" /> : <AlertCircle className="w-16 h-16 text-red-500" />}
              </div>
-             
              <h1 className="text-3xl font-bold tracking-tight mb-2">{passed ? 'Assessment Passed' : 'Assessment Failed'}</h1>
              <p className="text-primary-400 mb-8">{quiz.title}</p>
-             
              <div className="flex justify-center gap-12 mb-10">
                <div>
                  <div className="text-5xl font-black mb-1">{percentage}%</div>
@@ -130,7 +111,6 @@ const QuizPage: React.FC = () => {
                  <div className="text-xs uppercase tracking-wider text-primary-500 font-bold">Points</div>
                </div>
              </div>
-
              <div className="text-left">
                <h3 className="uppercase text-xs font-bold tracking-wider text-primary-500 mb-4 px-2">Review</h3>
                <div className="space-y-3">
@@ -165,20 +145,15 @@ const QuizPage: React.FC = () => {
       </div>
     );
   }
-
-  // -- ACTIVE QUIZ FOCUS UI --
   const question = quiz.questions[currentQuestion];
   const progress = ((currentQuestion + 1) / quiz.questions.length) * 100;
   const allAnswered = answers.every((a) => a !== -1);
-
   return (
     <div className="min-h-screen bg-[#09090b] flex flex-col justify-between">
-      
-      {/* Top minimal progress bar */}
+      {}
       <div className="h-1.5 w-full bg-[#1d1d20]">
         <div className="h-full bg-blue-500 transition-all duration-300 ease-out" style={{ width: `${progress}%` }} />
       </div>
-
       <header className="px-8 py-6 flex justify-between items-center border-b border-[#27272a]/50">
         <div className="text-primary-400 text-sm font-semibold tracking-wider uppercase">
           {quiz.title} <span className="mx-2 text-[#27272a]">|</span> <span className="text-white">Q {currentQuestion + 1} / {quiz.questions.length}</span>
@@ -190,13 +165,11 @@ const QuizPage: React.FC = () => {
           {formatTime(timeLeft)}
         </div>
       </header>
-
       <main className="flex-1 flex flex-col items-center justify-center p-8 max-w-4xl mx-auto w-full relative">
         <div className="w-full animate-fade-in">
           <h2 className="text-3xl md:text-5xl lg:text-5xl font-black tracking-tight text-white mb-16 leading-tight">
              {question.questionText}
           </h2>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {question.options.map((option, idx) => (
               <button
@@ -221,7 +194,6 @@ const QuizPage: React.FC = () => {
           </div>
         </div>
       </main>
-
       <footer className="px-8 py-6 border-t border-[#27272a]/50 flex justify-between items-center bg-[#09090b]">
          <div className="flex gap-2">
             {quiz.questions.map((_, idx) => (
@@ -236,7 +208,6 @@ const QuizPage: React.FC = () => {
               />
             ))}
          </div>
-
          <div className="flex gap-3">
            <button
              onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
@@ -269,5 +240,4 @@ const QuizPage: React.FC = () => {
     </div>
   );
 };
-
 export default QuizPage;

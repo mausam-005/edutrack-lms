@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GraduationCap, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
-
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,7 +10,6 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -25,10 +23,9 @@ const Login: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex">
-      {/* Left Panel - Illustration */}
+      {}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-primary-400/20 rounded-full blur-3xl animate-pulse-slow" />
@@ -50,7 +47,6 @@ const Login: React.FC = () => {
             Access world-class courses, interactive quizzes, and comprehensive study materials
             — all in one platform.
           </p>
-
           <div className="mt-12 flex items-center gap-6">
             <div className="text-center">
               <p className="text-3xl font-bold">500+</p>
@@ -69,8 +65,7 @@ const Login: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Right Panel - Form */}
+      {}
       <div className="flex-1 flex items-center justify-center p-6 bg-surface-50 dark:bg-surface-950">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
@@ -79,14 +74,12 @@ const Login: React.FC = () => {
             </div>
             <span className="text-2xl font-bold gradient-text">EduTrack</span>
           </div>
-
           <h1 className="text-3xl font-bold text-surface-900 dark:text-white mb-2">
             Welcome back
           </h1>
           <p className="text-surface-500 dark:text-surface-400 mb-8">
             Sign in to your account to continue
           </p>
-
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -104,7 +97,6 @@ const Login: React.FC = () => {
                 />
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                 Password
@@ -128,7 +120,6 @@ const Login: React.FC = () => {
                 </button>
               </div>
             </div>
-
             <button
               type="submit"
               disabled={isLoading}
@@ -144,7 +135,6 @@ const Login: React.FC = () => {
               )}
             </button>
           </form>
-
           <div className="mt-6 text-center">
             <p className="text-sm text-surface-500 dark:text-surface-400">
               Don't have an account?{' '}
@@ -153,7 +143,6 @@ const Login: React.FC = () => {
               </Link>
             </p>
           </div>
-
           {/* Demo accounts */}
           <div className="mt-8 p-4 rounded-xl bg-surface-100 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700">
             <p className="text-xs font-semibold text-surface-500 dark:text-surface-400 mb-3 uppercase tracking-wider">
@@ -187,5 +176,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-
 export default Login;
