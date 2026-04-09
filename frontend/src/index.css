@@ -16,7 +16,7 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Force dark mode for the premium look by default or rely on the class */
+    /* Force dark mode for the premium look bys */
     @apply bg-primary-950 text-primary-200 antialiased selection:bg-primary-700 selection:text-white;
   }
 
