@@ -4,7 +4,6 @@ import { Home, ArrowLeft } from 'lucide-react';
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-primary-950">
       <div className="text-center">
@@ -31,5 +30,4 @@ const NotFound: React.FC = () => {
     </div>
   );
 };
-
 export default NotFound;

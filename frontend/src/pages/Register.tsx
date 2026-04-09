@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GraduationCap, Mail, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
-
+import { getApiError } from '../utils/apiErrorHandler';
 const Register: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -13,7 +13,6 @@ const Register: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 6) {
@@ -25,16 +24,15 @@ const Register: React.FC = () => {
       await register(name, email, password, role);
       toast.success('Account created successfully!');
       navigate('/dashboard');
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+    } catch (error) {
+      toast.error(getApiError(error, 'Registration failed'));
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex">
-      {/* Left Panel */}
+      {}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-accent-600 via-primary-700 to-primary-900 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-32 right-20 w-72 h-72 bg-accent-400/20 rounded-full blur-3xl animate-pulse-slow" />
@@ -74,7 +72,6 @@ const Register: React.FC = () => {
           <p className="text-primary-400 mb-8">
             Join EduTrack to start learning today
           </p>
-
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-primary-300 mb-2">
@@ -92,7 +89,6 @@ const Register: React.FC = () => {
                 />
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                 Email Address
@@ -109,7 +105,6 @@ const Register: React.FC = () => {
                 />
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                 Password
@@ -134,8 +129,7 @@ const Register: React.FC = () => {
                 </button>
               </div>
             </div>
-
-            {/* Role Selector */}
+            {}
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                 I am a
@@ -158,7 +152,6 @@ const Register: React.FC = () => {
                 ))}
               </div>
             </div>
-
             <button
               type="submit"
               disabled={isLoading}
@@ -174,7 +167,6 @@ const Register: React.FC = () => {
               )}
             </button>
           </form>
-
           <div className="mt-6 text-center">
             <p className="text-sm text-primary-400">
               Already have an account?{' '}
@@ -188,5 +180,4 @@ const Register: React.FC = () => {
     </div>
   );
 };
-
 export default Register;

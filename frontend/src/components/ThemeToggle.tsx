@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
-
 const ThemeToggle: React.FC = () => {
   const [isDark, setIsDark] = useState(false);
-
   useEffect(() => {
     const stored = localStorage.getItem('edutrack_theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -11,14 +9,12 @@ const ThemeToggle: React.FC = () => {
     setIsDark(shouldBeDark);
     document.documentElement.classList.toggle('dark', shouldBeDark);
   }, []);
-
   const toggle = () => {
     const newDark = !isDark;
     setIsDark(newDark);
     document.documentElement.classList.toggle('dark', newDark);
     localStorage.setItem('edutrack_theme', newDark ? 'dark' : 'light');
   };
-
   return (
     <button
       onClick={toggle}
@@ -40,5 +36,4 @@ const ThemeToggle: React.FC = () => {
     </button>
   );
 };
-
 export default ThemeToggle;

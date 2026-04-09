@@ -12,16 +12,14 @@ const MyCourses: React.FC = () => {
   const navigate = useNavigate();
   const [teacherCourses, setTeacherCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     loadCourses();
   }, [user]);
-
   const loadCourses = async () => {
     try {
       if (user?.role === 'teacher') {
         const response = await courseService.getAll({ teacher: user._id, limit: 50 } as any);
-        setTeacherCourses(response.data.courses);
+        setTeacherCourses(response.data || []);
       }
     } catch (error) {
       console.error('Failed to load courses:', error);
@@ -29,7 +27,6 @@ const MyCourses: React.FC = () => {
       setLoading(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -37,12 +34,10 @@ const MyCourses: React.FC = () => {
       </div>
     );
   }
-
   const isStudent = user?.role === 'student';
   const courses = isStudent
     ? enrollments.map((e) => e.course as Course).filter(Boolean)
     : teacherCourses;
-
   return (
     <div className="space-y-8 animate-fade-in pb-12">
       {/* Header */}
@@ -69,7 +64,6 @@ const MyCourses: React.FC = () => {
           </button>
         )}
       </div>
-
       {courses.length === 0 ? (
         <div className="widget-panel p-16 text-center flex flex-col items-center justify-center">
           {isStudent ? (
@@ -102,5 +96,4 @@ const MyCourses: React.FC = () => {
     </div>
   );
 };
-
 export default MyCourses;

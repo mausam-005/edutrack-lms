@@ -2,14 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { container } from '../config/container';
 import { ApiResponse } from '../utils/ApiResponse';
-
-/**
- * AuthController — HTTP Layer for Authentication
- * 
- * SRP: Only handles HTTP request/response concerns.
- * All business logic is delegated to AuthService.
- * Uses ApiResponse for standardized response formatting.
- */
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
     try {
@@ -20,7 +12,6 @@ export class AuthController {
       next(error);
     }
   }
-
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
@@ -30,7 +21,6 @@ export class AuthController {
       next(error);
     }
   }
-
   static async getProfile(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const user = await container.authService.getProfile(req.user!._id.toString());

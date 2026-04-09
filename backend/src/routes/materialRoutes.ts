@@ -4,17 +4,12 @@ import { MaterialController } from '../controllers/materialController';
 import { authenticate } from '../middleware/auth';
 import { roleGuard } from '../middleware/roleGuard';
 import { validate } from '../middleware/validate';
-
 const router = Router();
-
-// Get course materials
 router.get(
   '/courses/:id/materials',
   authenticate,
   MaterialController.getByCourse
 );
-
-// Add material (teacher only)
 router.post(
   '/courses/:id/materials',
   authenticate,
@@ -28,13 +23,10 @@ router.post(
   ]),
   MaterialController.create
 );
-
-// Delete material (teacher only)
 router.delete(
   '/:id',
   authenticate,
   roleGuard('teacher', 'admin'),
   MaterialController.delete
 );
-
 export default router;

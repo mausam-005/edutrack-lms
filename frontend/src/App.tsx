@@ -4,8 +4,6 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
-
-// Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -17,7 +15,6 @@ import QuizPage from './pages/QuizPage';
 import QuizResults from './pages/QuizResults';
 import MyResults from './pages/MyResults';
 import NotFound from './pages/NotFound';
-
 const App: React.FC = () => {
   return (
     <AuthProvider>
@@ -38,11 +35,10 @@ const App: React.FC = () => {
           }}
         />
         <Routes>
-          {/* Public Routes */}
+          {}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
-          {/* Protected Routes */}
+          {}
           <Route
             element={
               <ProtectedRoute>
@@ -66,8 +62,7 @@ const App: React.FC = () => {
             <Route path="/quiz/:id" element={<QuizPage />} />
             <Route path="/quiz/:id/results" element={<QuizResults />} />
           </Route>
-
-          {/* Redirects */}
+          {}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -75,5 +70,4 @@ const App: React.FC = () => {
     </AuthProvider>
   );
 };
-
 export default App;

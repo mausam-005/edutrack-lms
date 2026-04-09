@@ -15,31 +15,31 @@ import {
   Activity,
   Plus
 } from 'lucide-react';
-
+import { formatDate } from '../utils/formatters';
 const Dashboard: React.FC = () => {
   const { user, enrollments } = useAuth();
   const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ totalCourses: 0, totalStudents: 0 });
-
   useEffect(() => {
     loadData();
   }, [user]);
-
   const loadData = async () => {
     try {
       if (user?.role === 'teacher') {
         const response = await courseService.getAll({ teacher: user._id, limit: 50 } as any);
-        setCourses(response.data.courses);
-        const totalStudents = response.data.courses.reduce(
-          (sum: number, c: Course) => sum + c.enrollmentCount,
+        const courses = response.data || [];
+        setCourses(courses);
+        const totalStudents = courses.reduce(
+          (sum: number, c: Course) => sum + (c.enrollmentCount || 0),
           0
         );
-        setStats({ totalCourses: response.data.courses.length, totalStudents });
+        setStats({ totalCourses: courses.length, totalStudents });
       } else {
         const response = await courseService.getAll({ limit: 4 });
-        setCourses(response.data.courses);
+        const courses = response.data || [];
+        setCourses(courses);
       }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
@@ -47,11 +47,9 @@ const Dashboard: React.FC = () => {
       setLoading(false);
     }
   };
-
-  const enrolledCourseIds = enrollments.map((e) => 
+  const enrolledCourseIds = enrollments.map((e) =>
     typeof e.course === 'object' ? e.course._id : e.course
   );
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[60vh]">
@@ -59,16 +57,13 @@ const Dashboard: React.FC = () => {
       </div>
     );
   }
-
-  // HEATMAP GENERATOR (Mock Data for visual UI)
   const heatmapData = Array.from({ length: 42 }).map((_, i) => ({
     date: new Date(Date.now() - (41 - i) * 24 * 60 * 60 * 1000),
     level: Math.random() > 0.6 ? Math.floor(Math.random() * 4) + 1 : 0
   }));
-
   return (
     <div className="space-y-6 animate-fade-in pb-10">
-      {/* Header / Command Center Welcome */}
+      {}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
           <p className="text-primary-400 text-sm font-medium uppercase tracking-wider mb-1">
@@ -78,7 +73,6 @@ const Dashboard: React.FC = () => {
             Overview
           </h1>
         </div>
-        
         {user?.role === 'teacher' && (
           <button
             onClick={() => navigate('/create-course')}
@@ -89,15 +83,12 @@ const Dashboard: React.FC = () => {
           </button>
         )}
       </div>
-
-      {/* Grid Layout inspired by Linear/Bento Box */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        
-        {/* Main large widget */}
+        {}
         <div className="widget-panel col-span-1 md:col-span-4 lg:col-span-4 p-6 relative bg-grid">
           <div className="absolute inset-0 bg-gradient-to-r from-[#111111] via-transparent to-[#111111] opacity-60 pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent opacity-80 pointer-events-none" />
-          
           <div className="relative z-10 flex flex-col h-full justify-between">
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-white mb-2">
@@ -109,7 +100,6 @@ const Dashboard: React.FC = () => {
                   : `You have ${enrollments.length} active enrollments. You're on a 5-day learning streak.`}
               </p>
             </div>
-            
             <div className="flex items-center gap-6">
               <div className="flex flex-col">
                 <span className="text-3xl font-bold text-white tracking-tight">
@@ -134,8 +124,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Heatmap Widget */}
+        {}
         <div className="widget-panel col-span-1 md:col-span-2 lg:col-span-2 p-5 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-primary-200 flex items-center gap-2">
@@ -144,12 +133,11 @@ const Dashboard: React.FC = () => {
             </h3>
             <span className="text-xs font-medium text-primary-500">Last 6 Weeks</span>
           </div>
-          
           <div className="flex-1 flex flex-col justify-end">
             <div className="grid grid-cols-7 gap-1.5 auto-rows-max">
               {heatmapData.map((d, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`aspect-square rounded-sm ${
                     d.level === 0 ? 'bg-[#27272a]' :
                     d.level === 1 ? 'bg-green-900/40' :
@@ -157,7 +145,7 @@ const Dashboard: React.FC = () => {
                     d.level === 3 ? 'bg-green-500/80' :
                     'bg-green-400'
                   }`}
-                  title={`${d.date.toDateString()}`}
+                  title={`${formatDate(d.date.toDateString())}`}
                 />
               ))}
             </div>
@@ -174,8 +162,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Stats Row */}
+        {}
         <div className="widget-panel col-span-1 md:col-span-2 lg:col-span-2 p-5">
           <div className="flex items-center gap-3 mb-2">
             <Trophy className="w-5 h-5 text-yellow-500" />
@@ -184,7 +171,6 @@ const Dashboard: React.FC = () => {
           <p className="text-2xl font-bold text-white mb-1">12</p>
           <p className="text-xs text-primary-500">Certificates earned</p>
         </div>
-
         <div className="widget-panel col-span-1 md:col-span-2 lg:col-span-2 p-5">
           <div className="flex items-center gap-3 mb-2">
             <Clock className="w-5 h-5 text-blue-500" />
@@ -193,7 +179,6 @@ const Dashboard: React.FC = () => {
           <p className="text-2xl font-bold text-white mb-1">5 Days</p>
           <p className="text-xs text-primary-500">Personal best is 14 days</p>
         </div>
-
         <div className="widget-panel col-span-1 md:col-span-2 lg:col-span-2 p-5">
           <div className="flex items-center gap-3 mb-2">
             <TrendingUp className="w-5 h-5 text-purple-500" />
@@ -202,8 +187,7 @@ const Dashboard: React.FC = () => {
           <p className="text-2xl font-bold text-white mb-1">94%</p>
           <p className="text-xs text-primary-500">Top 10% of learners</p>
         </div>
-
-        {/* Content Section */}
+        {}
         <div className="col-span-1 md:col-span-4 lg:col-span-6 mt-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="title-md">
@@ -216,7 +200,6 @@ const Dashboard: React.FC = () => {
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-
           {courses.length === 0 && enrollments.length === 0 ? (
             <div className="widget-panel p-12 text-center flex flex-col items-center justify-center">
               <BookOpen className="w-12 h-12 text-[#27272a] mb-4" />
@@ -256,10 +239,8 @@ const Dashboard: React.FC = () => {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
 };
-
 export default Dashboard;

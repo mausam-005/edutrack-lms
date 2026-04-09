@@ -2,15 +2,10 @@ import { Quiz, IQuiz } from '../models/Quiz';
 import { Result, IResult } from '../models/Result';
 import { IQuizRepository, IResultRepository } from '../interfaces/IQuizRepository';
 import { BaseRepository } from './BaseRepository';
-
-/**
- * QuizRepository — Concrete Quiz Data Access
- */
 export class QuizRepository extends BaseRepository<IQuiz> implements IQuizRepository {
   constructor() {
     super(Quiz);
   }
-
   async findByCourse(courseId: string): Promise<IQuiz[]> {
     return this.model
       .find({ course: courseId })
@@ -18,26 +13,19 @@ export class QuizRepository extends BaseRepository<IQuiz> implements IQuizReposi
       .exec();
   }
 }
-
-/**
- * ResultRepository — Concrete Result Data Access
- */
 export class ResultRepository extends BaseRepository<IResult> implements IResultRepository {
   constructor() {
     super(Result);
   }
-
   async findByStudentAndQuiz(studentId: string, quizId: string): Promise<IResult | null> {
     return this.model.findOne({ student: studentId, quiz: quizId }).exec();
   }
-
   async findByQuiz(quizId: string): Promise<IResult[]> {
     return this.model
       .findOne({ quiz: quizId })
       .populate('quiz', 'title questions')
       .exec() as any;
   }
-
   async findByStudent(studentId: string): Promise<IResult[]> {
     return this.model
       .find({ student: studentId })
@@ -46,7 +34,6 @@ export class ResultRepository extends BaseRepository<IResult> implements IResult
       .sort({ submittedAt: -1 })
       .exec();
   }
-
   async findByQuizWithStudentDetails(quizId: string): Promise<IResult[]> {
     return this.model
       .find({ quiz: quizId })

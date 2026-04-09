@@ -1,6 +1,5 @@
 import api from './api';
 import { ApiResponse, Quiz, QuizResult } from '../types';
-
 export const quizService = {
   getByCourse: async (courseId: string) => {
     const response = await api.get<ApiResponse<{ quizzes: Quiz[] }>>(
@@ -8,12 +7,10 @@ export const quizService = {
     );
     return response.data;
   },
-
   getById: async (quizId: string) => {
     const response = await api.get<ApiResponse<{ quiz: Quiz }>>(`/quizzes/${quizId}`);
     return response.data;
   },
-
   attempt: async (quizId: string, answers: number[]) => {
     const response = await api.post<ApiResponse<{ result: QuizResult }>>(
       `/quizzes/${quizId}/attempt`,
@@ -21,14 +18,12 @@ export const quizService = {
     );
     return response.data;
   },
-
   getResults: async (quizId: string) => {
     const response = await api.get<ApiResponse<{ results: QuizResult[] }>>(
       `/quizzes/${quizId}/results`
     );
     return response.data;
   },
-
   getMyResults: async () => {
     const response = await api.get<ApiResponse<{ results: QuizResult[] }>>(
       '/quizzes/my/results'

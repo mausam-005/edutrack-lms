@@ -1,13 +1,9 @@
 import mongoose from 'mongoose';
 import { config } from './env';
-
-// Singleton pattern for DB connection
 class Database {
   private static instance: Database;
   private isConnected: boolean = false;
-
   private constructor() {}
-
   public static getInstance(): Database {
     
     if (!Database.instance) {
@@ -15,14 +11,12 @@ class Database {
     }
     return Database.instance;
   }
-
   public async connect(): Promise<void> {
     if (this.isConnected) {
 
       console.log('📦 Using existing database connection');
       return;
     }
-
     try {
       const conn = await mongoose.connect(config.mongoUri);
       this.isConnected = true;
@@ -34,7 +28,6 @@ class Database {
 
     }
   }
-
   public async disconnect(): Promise<void> {
 
     if (!this.isConnected) return;
@@ -44,5 +37,4 @@ class Database {
 
   }
 }
-
 export const database = Database.getInstance();

@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
 export interface ICourse extends Document {
   title: string;
   description: string;
@@ -10,7 +9,6 @@ export interface ICourse extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
-
 const courseSchema = new Schema<ICourse>(
   {
     title: {
@@ -47,8 +45,5 @@ const courseSchema = new Schema<ICourse>(
     timestamps: true,
   }
 );
-
-// Index for search and filtering
 courseSchema.index({ title: 'text', description: 'text', category: 'text' });
-
 export const Course = mongoose.model<ICourse>('Course', courseSchema);

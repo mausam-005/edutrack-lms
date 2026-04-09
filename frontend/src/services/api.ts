@@ -8,8 +8,6 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
-// Request interceptor to attach JWT token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('edutrack_token');
@@ -20,8 +18,6 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-// Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -33,5 +29,4 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 export default api;

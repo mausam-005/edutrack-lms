@@ -1,19 +1,16 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
 export interface IQuestion {
   questionText: string;
   options: string[];
-  correctAnswer: number; // index 0-3
+  correctAnswer: number;
 }
-
 export interface IQuiz extends Document {
   course: mongoose.Types.ObjectId;
   title: string;
   questions: IQuestion[];
-  duration: number; // in minutes
+  duration: number;
   createdAt: Date;
 }
-
 const questionSchema = new Schema<IQuestion>(
   {
     questionText: {
@@ -36,7 +33,6 @@ const questionSchema = new Schema<IQuestion>(
   },
   { _id: false }
 );
-
 const quizSchema = new Schema<IQuiz>(
   {
     course: {
@@ -66,5 +62,4 @@ const quizSchema = new Schema<IQuiz>(
     timestamps: true,
   }
 );
-
 export const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);

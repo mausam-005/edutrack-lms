@@ -11,11 +11,9 @@ const MyResults: React.FC = () => {
   const navigate = useNavigate();
   const [results, setResults] = useState<QuizResult[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     loadResults();
   }, [user]);
-
   const loadResults = async () => {
     try {
       const response = await quizService.getMyResults();
@@ -26,7 +24,6 @@ const MyResults: React.FC = () => {
       setLoading(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -99,7 +96,6 @@ const MyResults: React.FC = () => {
               (result.score / result.totalQuestions) * 100
             );
             const passed = percentage >= 60;
-
             return (
               <div key={result._id} className="widget-panel p-5 flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
@@ -138,5 +134,4 @@ const MyResults: React.FC = () => {
     </div>
   );
 };
-
 export default MyResults;

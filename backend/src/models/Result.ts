@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
 export interface IResult extends Document {
   student: mongoose.Types.ObjectId;
   quiz: mongoose.Types.ObjectId;
@@ -9,7 +8,6 @@ export interface IResult extends Document {
   totalQuestions: number;
   submittedAt: Date;
 }
-
 const resultSchema = new Schema<IResult>(
   {
     student: {
@@ -49,8 +47,5 @@ const resultSchema = new Schema<IResult>(
     timestamps: true,
   }
 );
-
-// One attempt per student per quiz
 resultSchema.index({ student: 1, quiz: 1 }, { unique: true });
-
 export const Result = mongoose.model<IResult>('Result', resultSchema);

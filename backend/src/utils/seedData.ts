@@ -6,13 +6,10 @@ import { Course } from '../models/Course';
 import { Material } from '../models/Material';
 import { Quiz } from '../models/Quiz';
 import { Enrollment } from '../models/Enrollment';
-
 const seedData = async () => {
   try {
     await mongoose.connect(config.mongoUri);
     console.log('✅ Connected to MongoDB');
-
-    // Clear existing data
     await Promise.all([
       User.deleteMany({}),
       Course.deleteMany({}),
@@ -21,11 +18,8 @@ const seedData = async () => {
       Enrollment.deleteMany({}),
     ]);
     console.log('🗑️  Cleared existing data');
-
-    // Create users
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash('password123', salt);
-
     const users = await User.create([
       {
         name: 'Dr. Sarah Mitchell',
@@ -59,10 +53,7 @@ const seedData = async () => {
       },
     ]);
     console.log(`👥 Created ${users.length} users`);
-
     const [teacher1, teacher2, student1, student2] = users;
-
-    // Create courses
     const courses = await Course.create([
       {
         title: 'Introduction to Web Development',
@@ -120,8 +111,6 @@ const seedData = async () => {
       },
     ]);
     console.log(`📚 Created ${courses.length} courses`);
-
-    // Create enrollments
     await Enrollment.create([
       { student: student1._id, course: courses[0]._id },
       { student: student1._id, course: courses[2]._id },
@@ -129,8 +118,6 @@ const seedData = async () => {
       { student: student2._id, course: courses[1]._id },
     ]);
     console.log('📝 Created enrollments');
-
-    // Create materials
     await Material.create([
       {
         course: courses[0]._id,
@@ -172,8 +159,6 @@ const seedData = async () => {
       },
     ]);
     console.log('📄 Created study materials');
-
-    // Create quizzes
     await Quiz.create([
       {
         course: courses[0]._id,
@@ -283,7 +268,6 @@ const seedData = async () => {
       },
     ]);
     console.log('🧪 Created quizzes');
-
     console.log('\n✅ Seed data created successfully!');
     console.log('\n📋 Test Accounts:');
     console.log('   Teacher: sarah@edutrack.com / password123');
@@ -291,7 +275,6 @@ const seedData = async () => {
     console.log('   Student: alex@student.com / password123');
     console.log('   Student: maria@student.com / password123');
     console.log('   Admin:   admin@edutrack.com / password123\n');
-
     await mongoose.disconnect();
     process.exit(0);
   } catch (error) {
@@ -299,5 +282,4 @@ const seedData = async () => {
     process.exit(1);
   }
 };
-
 seedData();

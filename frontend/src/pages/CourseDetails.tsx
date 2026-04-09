@@ -24,29 +24,24 @@ import {
   MoreVertical,
   ChevronRight
 } from 'lucide-react';
-
+import { formatDate } from '../utils/formatters';
+import { getApiError } from '../utils/apiErrorHandler';
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user, refreshEnrollments } = useAuth();
   const navigate = useNavigate();
-
   const [course, setCourse] = useState<Course | null>(null);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
-  
-  // View states
   const [activeItem, setActiveItem] = useState<string>('overview');
   const [students, setStudents] = useState<any[]>([]);
-
   const isTeacherOwner = user?.role === 'teacher' && course?.teacher?._id === user?._id;
-
   useEffect(() => {
     loadCourse();
   }, [id]);
-
   const loadCourse = async () => {
     if (!id) return;
     try {
@@ -58,19 +53,17 @@ const CourseDetails: React.FC = () => {
       setCourse(courseRes.data.course);
       setMaterials(matRes.data.materials);
       setQuizzes(quizRes.data.quizzes);
-
       if (user?.role === 'student') {
         try {
           const enrollRes = await api.get(`/enrollments/courses/${id}/enrollment-status`);
           setIsEnrolled(enrollRes.data.data.isEnrolled);
-        } catch { /* ignore */ }
+        } catch {  }
       }
-
       if (user?.role === 'teacher') {
         try {
           const studentsRes = await api.get(`/enrollments/courses/${id}/students`);
           setStudents(studentsRes.data.data.enrollments);
-        } catch { /* ignore */ }
+        } catch {  }
       }
     } catch (error) {
       toast.error('Failed to load course');
@@ -78,7 +71,6 @@ const CourseDetails: React.FC = () => {
       setLoading(false);
     }
   };
-
   const handleEnroll = async () => {
     if (!id) return;
     setEnrolling(true);
@@ -88,42 +80,37 @@ const CourseDetails: React.FC = () => {
       toast.success('Enrolled successfully!');
       refreshEnrollments();
       loadCourse();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to enroll');
+    } catch (error) {
+      toast.error(getApiError(error, 'Failed to enroll'));
     } finally {
       setEnrolling(false);
     }
   };
-
   const handleDeleteCourse = async () => {
     if (!id || !confirm('Permanently delete this project?')) return;
     try {
       await courseService.delete(id);
       toast.success('Project deleted');
       navigate('/courses');
-    } catch (error: any) {
-      toast.error('Failed to delete');
+    } catch (error) {
+      toast.error(getApiError(error, 'Failed to delete'));
     }
   };
-
   if (loading) return <div className="flex justify-center items-center h-[60vh]"><LoadingSpinner size="lg" /></div>;
   if (!course) return <div className="text-center py-20 text-white">Project not found</div>;
-
   return (
     <div className="flex h-[calc(100vh-120px)] -mx-6 -mt-6 bg-[#09090b]">
-      
-      {/* LEFT SIDEBAR - Workspace Outline */}
+      {}
       <div className="w-64 border-r border-[#27272a] bg-[#09090b] flex flex-col pt-6 overflow-y-auto">
-        <button 
-          onClick={() => navigate(-1)} 
+        <button
+          onClick={() => navigate(-1)}
           className="flex items-center text-xs text-primary-500 hover:text-white px-4 mb-6 transition-colors"
         >
           <ArrowLeft className="w-3 h-3 mr-1" /> Back
         </button>
-
         <div className="px-4 mb-4">
           <div className="text-[10px] font-semibold text-primary-500 uppercase tracking-wider mb-2">Outline</div>
-          <button 
+          <button
             onClick={() => setActiveItem('overview')}
             className={classNames('w-full flex items-center px-2 py-1.5 rounded-md text-sm transition-colors', {
               'bg-[#1d1d20] text-white': activeItem === 'overview',
@@ -133,7 +120,6 @@ const CourseDetails: React.FC = () => {
             <BookOpen className="w-4 h-4 mr-2" /> Overview
           </button>
         </div>
-
         <div className="px-4 mb-4">
           <div className="flex items-center justify-between text-[10px] font-semibold text-primary-500 uppercase tracking-wider mb-2">
             <span>Materials</span>
@@ -141,7 +127,7 @@ const CourseDetails: React.FC = () => {
           </div>
           {materials.length === 0 && <div className="text-xs text-primary-600 px-2">No materials</div>}
           {materials.map((mat) => (
-            <button 
+            <button
               key={mat._id}
               onClick={() => setActiveItem(`mat-${mat._id}`)}
               className={classNames('w-full flex items-center px-2 py-1.5 rounded-md text-sm transition-colors', {
@@ -149,12 +135,11 @@ const CourseDetails: React.FC = () => {
                 'text-primary-400 hover:text-white hover:bg-[#111111]': activeItem !== `mat-${mat._id}`
               })}
             >
-              <FileText className="w-4 h-4 mr-2 shrink-0" /> 
+              <FileText className="w-4 h-4 mr-2 shrink-0" />
               <span className="truncate">{mat.title}</span>
             </button>
           ))}
         </div>
-
         <div className="px-4 mb-4">
           <div className="flex items-center justify-between text-[10px] font-semibold text-primary-500 uppercase tracking-wider mb-2">
             <span>Assessments</span>
@@ -162,7 +147,7 @@ const CourseDetails: React.FC = () => {
           </div>
           {quizzes.length === 0 && <div className="text-xs text-primary-600 px-2">No assessments</div>}
           {quizzes.map((quiz) => (
-            <button 
+            <button
               key={quiz._id}
               onClick={() => setActiveItem(`quiz-${quiz._id}`)}
               className={classNames('w-full flex items-center px-2 py-1.5 rounded-md text-sm transition-colors', {
@@ -170,15 +155,14 @@ const CourseDetails: React.FC = () => {
                 'text-primary-400 hover:text-white hover:bg-[#111111]': activeItem !== `quiz-${quiz._id}`
               })}
             >
-              <ClipboardList className="w-4 h-4 mr-2 shrink-0" /> 
+              <ClipboardList className="w-4 h-4 mr-2 shrink-0" />
               <span className="truncate">{quiz.title}</span>
             </button>
           ))}
         </div>
-
         {isTeacherOwner && (
           <div className="px-4 mt-auto pb-4">
-            <button 
+            <button
               onClick={() => setActiveItem('students')}
               className={classNames('w-full flex items-center px-2 py-1.5 rounded-md text-sm transition-colors', {
                 'bg-[#1d1d20] text-white': activeItem === 'students',
@@ -190,12 +174,10 @@ const CourseDetails: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* MAIN CONTENT AREA */}
+      {}
       <div className="flex-1 bg-[#111111] overflow-y-auto w-full relative">
         <div className="max-w-4xl mx-auto px-8 py-12">
-          
-          {/* OVERVIEW RENDER */}
+          {}
           {activeItem === 'overview' && (
             <div className="animate-slide-up space-y-8">
               {course.thumbnail && (
@@ -209,30 +191,26 @@ const CourseDetails: React.FC = () => {
                   )}
                 </div>
               )}
-              
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-3 text-primary-400 text-sm mb-3">
                     <span className="px-2 py-0.5 bg-[#1d1d20] border border-[#27272a] rounded text-xs font-semibold uppercase">{course.category}</span>
                     <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {course.enrollmentCount}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {new Date(course.createdAt).toLocaleDateString()}</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {formatDate(course.createdAt)}</span>
                   </div>
                   <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-6">
                     {course.title}
                   </h1>
                 </div>
-
                 {!isTeacherOwner && user?.role === 'student' && !isEnrolled && (
                   <button onClick={handleEnroll} disabled={enrolling} className="btn-primary text-black bg-white shrink-0">
                     {enrolling ? 'Processing...' : 'Enroll Now'}
                   </button>
                 )}
               </div>
-
               <div className="prose prose-invert prose-lg max-w-none prose-p:text-primary-300 prose-p:leading-relaxed">
                 <p>{course.description}</p>
               </div>
-
               {isTeacherOwner && (
                 <div className="pt-8 border-t border-[#27272a] mt-12 flex justify-end">
                   <button onClick={handleDeleteCourse} className="text-red-500 text-sm font-medium hover:text-red-400 flex items-center gap-1">
@@ -242,8 +220,7 @@ const CourseDetails: React.FC = () => {
               )}
             </div>
           )}
-
-          {/* MATERIAL RENDER */}
+          {}
           {activeItem.startsWith('mat-') && (() => {
             const mat = materials.find(m => m._id === activeItem.replace('mat-', ''));
             if (!mat) return null;
@@ -253,7 +230,6 @@ const CourseDetails: React.FC = () => {
                   <span className="uppercase text-xs font-bold tracking-wider">{mat.type}</span>
                 </div>
                 <h1 className="text-3xl font-bold text-white mb-8">{mat.title}</h1>
-                
                 {mat.type === 'text' ? (
                   <div className="text-primary-200 leading-relaxed whitespace-pre-wrap font-serif text-lg">
                     {mat.content}
@@ -277,8 +253,7 @@ const CourseDetails: React.FC = () => {
               </div>
             );
           })()}
-
-          {/* QUIZ RENDER */}
+          {}
           {activeItem.startsWith('quiz-') && (() => {
             const quiz = quizzes.find(q => q._id === activeItem.replace('quiz-', ''));
             if (!quiz) return null;
@@ -290,7 +265,6 @@ const CourseDetails: React.FC = () => {
                   <span>{quiz.questions.length} Questions</span>
                 </div>
                 <h1 className="text-4xl font-bold text-white mb-8 tracking-tight">{quiz.title}</h1>
-                
                 {user?.role === 'student' && isEnrolled ? (
                   <div className="widget-panel p-10 flex flex-col items-center text-center">
                     <div className="w-16 h-16 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6">
@@ -334,13 +308,11 @@ const CourseDetails: React.FC = () => {
               </div>
             );
           })()}
-
-          {/* STUDENTS RENDER */}
+          {}
           {activeItem === 'students' && isTeacherOwner && (
             <div className="animate-slide-up space-y-6">
                <h1 className="text-3xl font-bold text-white mb-2">Student Directory</h1>
                <p className="text-primary-400 mb-8">{students.length} students enrolled</p>
-               
                <div className="widget-panel overflow-hidden">
                  <table className="w-full text-left text-sm text-primary-300">
                    <thead className="bg-[#1d1d20] border-b border-[#27272a] text-primary-500 uppercase text-xs font-semibold">
@@ -359,7 +331,7 @@ const CourseDetails: React.FC = () => {
                              <div className="text-xs">{e.student?.email}</div>
                            </div>
                          </td>
-                         <td className="px-6 py-4">{new Date(e.enrolledAt).toLocaleDateString()}</td>
+                         <td className="px-6 py-4">{formatDate(e.enrolledAt)}</td>
                        </tr>
                      ))}
                    </tbody>
@@ -367,11 +339,9 @@ const CourseDetails: React.FC = () => {
                </div>
             </div>
           )}
-
         </div>
       </div>
     </div>
   );
 };
-
 export default CourseDetails;
