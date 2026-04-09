@@ -57,16 +57,16 @@ app.use(errorHandler);
 
 // ── Register Event Listeners (Observer Pattern) ──────────
 eventBus.subscribe(AppEvents.USER_REGISTERED, (data) => {
-  logger.info(`📧 Welcome email would be sent to user: ${data.email}`);
+  logger.info(`Welcome email would be sent to user: ${data.email}`);
 });
 
 eventBus.subscribe(AppEvents.STUDENT_ENROLLED, (data) => {
-  logger.info(`📚 Enrollment notification: Student ${data.studentId} enrolled in "${data.courseName}"`);
+  logger.info(`Enrollment notification: Student ${data.studentId} enrolled in "${data.courseName}"`);
 });
 
 eventBus.subscribe(AppEvents.QUIZ_ATTEMPTED, (data) => {
   logger.info(
-    `🎯 Quiz result: Student ${data.studentId} scored ${data.score}/${data.totalQuestions} (${data.percentage}%)`
+    `Quiz result: Student ${data.studentId} scored ${data.score}/${data.totalQuestions} (${data.percentage}%)`
   );
 });
 
