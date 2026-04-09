@@ -5,10 +5,10 @@ const startServer = async () => {
   try {
     await database.connect();
     app.listen(config.port, () => {
-      console.log(`\n🚀 EduTrack API server running on port ${config.port}`);
-      console.log(`📡 Environment: ${config.nodeEnv}`);
-      console.log(`🌐 Frontend URL: ${config.frontendUrl}`);
-      console.log(`📊 Health check: http://localhost:${config.port}/api/health\n`);
+      console.log(`\nEduTrack API server running on port ${config.port}`);
+      console.log(`Environment: ${config.nodeEnv}`);
+      console.log(`Frontend URL: ${config.frontendUrl}`);
+      console.log(`Health check: http://localhost:${config.port}/api/health\n`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

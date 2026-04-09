@@ -24,7 +24,7 @@ export class CourseController {
         category: category as string,
         teacher: teacher as string,
       });
-      ApiResponse.paginated(res, result.data, result.pagination);
+      ApiResponse.success(res, { courses: result.data, pagination: result.pagination });
     } catch (error) {
       next(error);
     }
