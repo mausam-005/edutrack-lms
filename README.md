@@ -82,15 +82,6 @@ cd backend
 npm run seed
 ```
 
-## 🔑 Demo Accounts
-
-| Role | Email | Password |
-|------|-------|----------|
-| Teacher | sarah@edutrack.com | password123 |
-| Teacher | james@edutrack.com | password123 |
-| Student | alex@student.com | password123 |
-| Student | maria@student.com | password123 |
-| Admin | admin@edutrack.com | password123 |
 
 ## 📡 API Endpoints
 
