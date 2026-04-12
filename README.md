@@ -2,6 +2,11 @@
 
 A full-stack Learning Management System built with React, Node.js, Express, TypeScript, and MongoDB.
 
+## 🌐 Live Deployment
+
+- **Frontend (UI)**: [https://edutrack-lms.netlify.app](https://edutrack-lms.netlify.app)
+- **Backend (API)**: [https://edutrack-lms-api.onrender.com](https://edutrack-lms-api.onrender.com)
+
 ## 🚀 Features
 
 - **JWT Authentication** with role-based access control (Student / Teacher / Admin)
@@ -139,6 +144,6 @@ npm run seed
 
 - Satyam Kumar  
 - Kavya Saraswat  
-- Mausam Kumar  
+- Mausam Kumar Dwivedi
 - Rachit Singh  
 - Himank Kaushik  
