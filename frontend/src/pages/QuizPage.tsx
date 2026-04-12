@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { quizService } from '../services/quizService';
-import type { Quiz } from '../types';
+import type { Quiz, QuizResult } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import toast from 'react-hot-toast';
 import { ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import classNames from 'classnames';
+import { getApiError } from '../utils/apiErrorHandler';
 const QuizPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -14,11 +15,61 @@ const QuizPage: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<QuizResult | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
+  const handleSubmitRef = useRef<() => void>(() => {});
+
+  const handleSubmit = useCallback(async () => {
+    if (!id || !quiz) return;
+    const finalAnswers = answers.map((a) => (a === -1 ? 0 : a));
+    setSubmitting(true);
+    try {
+      const nextResult = await quizService.attempt(id, finalAnswers);
+      setResult(nextResult);
+      toast.success('Assessment submitted!');
+    } catch (error) {
+      const msg = getApiError(error, 'Failed to submit');
+      if (msg.toLowerCase().includes('already attempted')) {
+        toast.error('You have already taken this assessment');
+        navigate(-1);
+      } else {
+        toast.error(msg);
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }, [id, quiz, answers, navigate]);
   useEffect(() => {
-    loadQuiz();
+    handleSubmitRef.current = handleSubmit;
+  }, [handleSubmit]);
+
+  const loadQuiz = useCallback(async () => {
+    if (!id) return;
+
+    try {
+      const results = await quizService.getResults(id);
+      if (results.length > 0) {
+        setResult(results[0]);
+      }
+    } catch (error) {
+      console.error('Failed to load existing quiz result:', error);
+    }
+
+    try {
+      const fetchedQuiz = await quizService.getById(id);
+      setQuiz(fetchedQuiz);
+      setAnswers(new Array(fetchedQuiz.questions.length).fill(-1));
+    } catch (error) {
+      toast.error(getApiError(error, 'Failed to load quiz'));
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => {
+    void loadQuiz();
+  }, [loadQuiz]);
+
   useEffect(() => {
     if (!quiz || result) return;
     setTimeLeft(quiz.duration * 60);
@@ -26,7 +77,7 @@ const QuizPage: React.FC = () => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          handleSubmit();
+          handleSubmitRef.current();
           return 0;
         }
         return prev - 1;
@@ -34,56 +85,29 @@ const QuizPage: React.FC = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, [quiz, result]);
-  const loadQuiz = async () => {
-    if (!id) return;
-    try {
-      const resultsRes = await quizService.getResults(id);
-      if (resultsRes.data.results.length > 0) {
-        setResult(resultsRes.data.results[0]);
-      }
-    } catch {  }
-    try {
-      const quizRes = await quizService.getById(id);
-      const fetchedQuiz = quizRes.data.quiz;
-      setQuiz(fetchedQuiz);
-      setAnswers(new Array(fetchedQuiz.questions.length).fill(-1));
-    } catch (error) {
-      toast.error('Failed to load quiz');
-    } finally {
-      setLoading(false);
-    }
-  };
+
   const handleSelectAnswer = (optionIndex: number) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = optionIndex;
     setAnswers(newAnswers);
   };
-  const handleSubmit = async () => {
-    if (!id || !quiz) return;
-    const finalAnswers = answers.map((a) => (a === -1 ? 0 : a));
-    setSubmitting(true);
-    try {
-      const response = await quizService.attempt(id, finalAnswers);
-      setResult(response.data.result);
-      toast.success('Assessment submitted!');
-    } catch (error: any) {
-      if (error.response?.data?.message?.includes('already attempted')) {
-        toast.error('You have already taken this assessment');
-        navigate(-1);
-      } else {
-        toast.error(error.response?.data?.message || 'Failed to submit');
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-  if (loading) return <div className="flex justify-center items-center h-screen bg-[#09090b]"><LoadingSpinner size="lg" /></div>;
-  if (!quiz) return <div className="text-center py-20 text-white">Assessment not found</div>;
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#09090b]">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!quiz) return <div className="py-20 text-center text-white">Assessment not found</div>;
+
   if (result) {
     const percentage = Math.round((result.score / result.totalQuestions) * 100);
     const passed = percentage >= 60;
@@ -91,7 +115,7 @@ const QuizPage: React.FC = () => {
       <div className="min-h-screen bg-[#09090b] text-white flex flex-col items-center justify-center p-6">
         <div className="max-w-2xl w-full">
           <button onClick={() => navigate(-1)} className="text-primary-500 hover:text-white flex items-center gap-2 mb-8 transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to Project
+            <ArrowLeft className="w-4 h-4" /> Back to Course
           </button>
           <div className="bg-[#111111] border border-[#27272a] rounded-2xl p-10 text-center relative overflow-hidden">
              <div className={`absolute top-0 left-0 w-full h-1 ${passed ? 'bg-green-500' : 'bg-red-500'}`} />

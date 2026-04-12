@@ -101,7 +101,7 @@ const Login: React.FC = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-primary-300 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -145,34 +145,6 @@ const Login: React.FC = () => {
                 Create one
               </Link>
             </p>
-          </div>
-          {/* Demo accounts */}
-          <div className="mt-8 p-4 rounded-xl bg-[#111111] border border-[#27272a]">
-            <p className="text-xs font-semibold text-primary-500 mb-3 uppercase tracking-wider">
-              Demo Accounts
-            </p>
-            <div className="space-y-2">
-              {[
-                { role: 'Teacher', email: 'sarah@edutrack.com' },
-                { role: 'Student', email: 'alex@student.com' },
-              ].map((demo) => (
-                <button
-                  key={demo.email}
-                  type="button"
-                  onClick={() => {
-                    setEmail(demo.email);
-                    setPassword('password123');
-                  }}
-                  className="flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs hover:bg-[#1d1d20] transition-colors text-left"
-                >
-                  <span className="font-medium text-primary-200">
-                    {demo.role}
-                  </span>
-                  <span className="text-primary-500">{demo.email}</span>
-                </button>
-              ))}
-              <p className="text-xs text-primary-500 mt-1">Password: password123</p>
-            </div>
           </div>
         </div>
       </div>
