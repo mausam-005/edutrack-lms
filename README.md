@@ -36,23 +36,23 @@ edutrack-lms/
 │   └── src/
 │       ├── config/        # DB connection (singleton), env config
 │       ├── controllers/   # Request handlers
-│       ├── interfaces/    # Request handlers
+│       ├── interfaces/    # TypeScript definitions for strong typing
 │       ├── middleware/    # Auth, role guard, error handler, validation
 │       ├── models/        # Mongoose schemas (User, Course, Quiz, etc.)
-│       ├── patterns/      # Request handlers
-│       ├── repositories/  # Request handlers
+│       ├── patterns/      # Custom design patterns (EventBus, Strategies)
+│       ├── repositories/  # Data access layer for DB queries
 │       ├── routes/        # Express route definitions
 │       ├── services/      # Business logic layer
 │       └── utils/         # ApiError class, seed data script
 ├── frontend/
 │   └── src/
-│       ├── assets/        # Request handlers
+│       ├── assets/        # Static files (images, icons)
 │       ├── components/    # Reusable UI components
-│       ├── context/       # Auth context provider
+│       ├── context/       # Global state (Auth context provider)
 │       ├── pages/         # Route pages
 │       ├── services/      # API call functions (Axios)
-│       ├── types/         # TypeScript interfaces
-│       └── utils/         # TypeScript interfaces
+│       ├── types/         # TypeScript interfaces for the client
+│       └── utils/         # Helper functions and formatters
 └── .env.example
 ```
 
