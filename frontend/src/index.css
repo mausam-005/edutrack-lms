@@ -98,6 +98,10 @@
     @apply bg-primary-950 text-primary-200;
   }
 
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-950;
+  }
+
   .bg-grid {
     background-size: 32px 32px;
     background-image: linear-gradient(to right, #27272a 1px, transparent 1px), linear-gradient(to bottom, #27272a 1px, transparent 1px);
