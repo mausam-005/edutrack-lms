@@ -24,10 +24,11 @@ const App: React.FC = () => {
           toastOptions={{
             duration: 3000,
             style: {
-              background: 'var(--toast-bg, #fff)',
-              color: 'var(--toast-color, #1e293b)',
+              background: '#111111',
+              color: '#ffffff',
+              border: '1px solid #27272a',
               borderRadius: '12px',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
               padding: '14px 20px',
               fontSize: '14px',
               fontWeight: '500',
