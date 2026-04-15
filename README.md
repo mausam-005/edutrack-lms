@@ -111,7 +111,7 @@ npm run seed
 
 ## UML Diagrams
 
-- Link - https://excalidraw.com/#json=aUNErciWaETx_aOou_Ead,uBZ_KB_Qcm8CD9oNOPsUOQ
+- Link - (https://excalidraw.com/#json=IZuhYg8LoQ4qXGpKE4Any,dbes2XwwHklcriedZ9VgwA)
 
 1. EduTrack LMS — High-Level System Architecture
 
