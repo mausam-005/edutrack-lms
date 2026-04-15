@@ -111,6 +111,8 @@ npm run seed
 
 ## UML Diagrams
 
+- Link - https://excalidraw.com/#json=aUNErciWaETx_aOou_Ead,uBZ_KB_Qcm8CD9oNOPsUOQ
+
 - EduTrack LMS — High-Level System Architecture
   
   <img width="804" height="503" alt="Screenshot 2026-04-09 at 11 17 57 PM" src="https://github.com/user-attachments/assets/5f762091-ecca-49f7-9779-8e0cc920a749" />
