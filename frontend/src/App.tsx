@@ -14,6 +14,7 @@ import MyCourses from './pages/MyCourses';
 import QuizPage from './pages/QuizPage';
 import QuizResults from './pages/QuizResults';
 import MyResults from './pages/MyResults';
+import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 const App: React.FC = () => {
   return (
@@ -51,6 +52,8 @@ const App: React.FC = () => {
             <Route path="/courses/:id" element={<CourseDetails />} />
             <Route path="/my-courses" element={<MyCourses />} />
             <Route path="/my-results" element={<MyResults />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:id" element={<Profile />} />
             <Route
               path="/create-course"
               element={

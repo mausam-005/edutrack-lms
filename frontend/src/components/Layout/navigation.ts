@@ -55,7 +55,12 @@ export const getRouteMeta = (pathname: string) => {
     '/create-course': { section: 'Course Management', title: 'Create Course' },
     '/login': { section: 'Authentication', title: 'Sign In' },
     '/register': { section: 'Authentication', title: 'Create Account' },
+    '/profile': { section: 'Account', title: 'Profile' },
   };
+
+  if (pathname.startsWith('/profile/')) {
+    return { section: 'Account', title: 'Profile' };
+  }
 
   return routeMap[pathname] || { section: 'EduTrack LMS', title: 'Dashboard' };
 };

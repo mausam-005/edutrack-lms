@@ -4,6 +4,9 @@ import { User } from '../types';
 import { authService } from '../services/authService';
 import api from '../services/api';
 import { Enrollment } from '../types';
+
+const AVATAR_API = 'https://api.dicebear.com/9.x/initials/svg?seed=';
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
@@ -12,6 +15,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, role: string) => Promise<void>;
   logout: () => void;
+  updateUser: (updatedUser: User) => void;
   enrollments: Enrollment[];
   refreshEnrollments: () => Promise<void>;
 }
@@ -90,6 +94,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (email: string, password: string) => {
     const { user: userData, token: authToken } = await authService.login(email, password);
+    // Assign a random avatar if none exists
+    if (!userData.avatar) {
+      userData.avatar = `${AVATAR_API}${encodeURIComponent(userData.name)}`;
+    }
     setUser(userData);
     setToken(authToken);
     localStorage.setItem('edutrack_token', authToken);
@@ -108,6 +116,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
   const register = async (name: string, email: string, password: string, role: string) => {
     const { user: userData, token: authToken } = await authService.register(name, email, password, role);
+    // Assign a random avatar for new users
+    if (!userData.avatar) {
+      userData.avatar = `${AVATAR_API}${encodeURIComponent(userData.name)}`;
+    }
     setUser(userData);
     setToken(authToken);
     localStorage.setItem('edutrack_token', authToken);
@@ -131,6 +143,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('edutrack_token');
     localStorage.removeItem('edutrack_user');
   };
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem('edutrack_user', JSON.stringify(updatedUser));
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -141,6 +157,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         register,
         logout,
+        updateUser,
         enrollments,
         refreshEnrollments,
       }}

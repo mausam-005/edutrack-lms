@@ -108,7 +108,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
         className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-white/10 bg-[#111111] shadow-palette animate-command-enter">
+      <div className="relative w-full max-w-xl overflow-hidden rounded-[32px] border border-white/10 bg-[#111111] shadow-palette animate-command-enter">
         <div className="flex items-center border-b border-[#27272a] px-4">
           <Search className="h-5 w-5 shrink-0 text-primary-400" />
           <input
@@ -141,7 +141,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
                   onClick={() => handleSelect(command.path)}
                   onMouseEnter={() => setActiveIndex(index)}
                   className={classNames(
-                    'flex w-full items-center rounded-lg px-3 py-3 text-left transition-colors',
+                    'flex w-full items-center rounded-xl px-3 py-3 text-left transition-colors',
                     {
                       'bg-[#1d1d20] text-white': activeIndex === index,
                       'text-primary-300 hover:bg-[#1d1d20]/50 hover:text-white':

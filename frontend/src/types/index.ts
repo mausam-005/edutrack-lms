@@ -4,6 +4,16 @@ export interface User {
   email: string;
   role: 'student' | 'teacher' | 'admin';
   avatar?: string;
+  bio?: string;
+  socialLinks?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    website?: string;
+  };
+  preferences?: {
+    emailNotifications: boolean;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -14,6 +24,7 @@ export interface Course {
   category: string;
   thumbnail: string;
   teacher: User;
+  collaborators: User[];
   enrollmentCount: number;
   createdAt: string;
   updatedAt: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { LogOut, GraduationCap } from 'lucide-react';
 import classNames from 'classnames';
 import { useAuth } from '../../context/AuthContext';
@@ -36,15 +36,29 @@ const FloatingDock: React.FC = () => {
               <p className="text-lg font-semibold text-white">Learning Portal</p>
             </div>
           </div>
-          <div className="mt-6 flex items-center gap-3 rounded-2xl border border-[#27272a] bg-[#111111] px-4 py-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/15 text-sm font-semibold text-blue-300">
-              {initials || <GraduationCap className="h-5 w-5" />}
+          <Link to="/profile" className="mt-6 flex items-center gap-3 rounded-2xl border border-[#27272a] bg-[#111111] px-4 py-3 transition-colors hover:bg-[#1d1d20]">
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-[#27272a] bg-[#1d1d20] text-sm font-semibold text-blue-300">
+              {user?.avatar && !user.avatar.includes('api.dicebear.com') ? (
+                <img
+                  src={
+                    user.avatar.startsWith('/uploads/')
+                      ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'}${user.avatar}`
+                      : user.avatar
+                  }
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-blue-500/15">
+                  {initials || <GraduationCap className="h-5 w-5" />}
+                </div>
+              )}
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-white">{user?.name}</p>
               <p className="truncate text-xs text-primary-500">{user?.email}</p>
             </div>
-          </div>
+          </Link>
         </div>
 
         <nav className="flex-1 space-y-1 px-4 py-6">

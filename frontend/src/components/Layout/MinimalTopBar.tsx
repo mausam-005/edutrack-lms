@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Search, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import CommandPalette from './CommandPalette';
+import NotificationBell from '../NotificationBell';
 import { getRouteMeta } from './navigation';
 
 const MinimalTopBar: React.FC = () => {
@@ -49,7 +50,7 @@ const MinimalTopBar: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="hidden items-center gap-2 rounded-xl border border-[#27272a] bg-[#111111] px-3 py-2 text-sm text-primary-400 transition-colors hover:bg-[#1d1d20] md:flex md:w-64"
+            className="hidden items-center gap-2 rounded-2xl border border-[#27272a] bg-[#111111] px-3 py-2 text-sm text-primary-400 transition-colors hover:bg-[#1d1d20] md:flex md:w-64"
           >
             <Search className="h-4 w-4" />
             <span className="flex-1 text-left">Search courses or pages</span>
@@ -66,15 +67,35 @@ const MinimalTopBar: React.FC = () => {
             <Search className="h-5 w-5" />
           </button>
 
-          <div className="hidden items-center gap-3 rounded-full border border-[#27272a] bg-[#111111] px-3 py-2 sm:flex">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/15 text-xs font-semibold text-blue-300">
-              {initials || 'U'}
+          <NotificationBell />
+
+          <Link
+            to="/profile"
+            className="hidden items-center gap-3 rounded-full border border-[#27272a] bg-[#111111] px-3 py-2 transition-colors hover:bg-[#1d1d20] sm:flex"
+            title="View Profile"
+          >
+            <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-[#27272a] bg-[#1d1d20]">
+              {user?.avatar && !user.avatar.includes('api.dicebear.com') ? (
+                <img
+                  src={
+                    user.avatar.startsWith('/uploads/')
+                      ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'}${user.avatar}`
+                      : user.avatar
+                  }
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-blue-500/15 text-xs font-semibold text-blue-300">
+                  {initials || 'U'}
+                </div>
+              )}
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-white">{user?.name}</p>
               <p className="truncate text-xs capitalize text-primary-500">{user?.role}</p>
             </div>
-          </div>
+          </Link>
 
           <button onClick={handleLogout} className="btn-secondary gap-2 px-3 py-2" title="Sign out of your account">
             <LogOut className="h-4 w-4" />
