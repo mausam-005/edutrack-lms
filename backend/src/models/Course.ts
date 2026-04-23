@@ -5,6 +5,7 @@ export interface ICourse extends Document {
   category: string;
   thumbnail: string;
   teacher: mongoose.Types.ObjectId;
+  collaborators: mongoose.Types.ObjectId[];
   enrollmentCount: number;
   createdAt: Date;
   updatedAt: Date;
@@ -36,6 +37,10 @@ const courseSchema = new Schema<ICourse>(
       ref: 'User',
       required: true,
     },
+    collaborators: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    }],
     enrollmentCount: {
       type: Number,
       default: 0,

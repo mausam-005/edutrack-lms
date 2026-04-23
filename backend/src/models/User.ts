@@ -5,6 +5,16 @@ export interface IUser extends Document {
   password: string;
   role: 'student' | 'teacher' | 'admin';
   avatar?: string;
+  bio?: string;
+  socialLinks?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    website?: string;
+  };
+  preferences?: {
+    theme?: 'light' | 'dark';
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -39,6 +49,19 @@ const userSchema = new Schema<IUser>(
     avatar: {
       type: String,
       default: '',
+    },
+    bio: {
+      type: String,
+      maxlength: [500, 'Bio cannot exceed 500 characters'],
+    },
+    socialLinks: {
+      github: { type: String },
+      linkedin: { type: String },
+      twitter: { type: String },
+      website: { type: String },
+    },
+    preferences: {
+      theme: { type: String, enum: ['light', 'dark'], default: 'dark' }
     },
   },
   {
