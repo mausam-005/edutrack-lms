@@ -172,13 +172,14 @@ const CourseList: React.FC = () => {
             </p>
           )}
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch">
             {courses.map((course) => (
-              <CourseCard
-                key={course._id}
-                course={course}
-                isEnrolled={enrolledCourseIds.includes(course._id)}
-              />
+              <div key={course._id} className="flex h-full">
+                <CourseCard
+                  course={course}
+                  isEnrolled={enrolledCourseIds.includes(course._id)}
+                />
+              </div>
             ))}
           </div>
 

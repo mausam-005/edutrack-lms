@@ -16,6 +16,7 @@ import { Course, QuizResult } from '../types';
 import CourseCard from '../components/CourseCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { formatDate } from '../utils/formatters';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const Dashboard: React.FC = () => {
   const { user, enrollments } = useAuth();
@@ -146,7 +147,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-6">
-        <div className="widget-panel relative col-span-1 bg-grid p-6 md:col-span-4 lg:col-span-4">
+        <div className={`widget-panel relative col-span-1 bg-grid p-6 md:col-span-4 ${canManageCourses ? 'lg:col-span-3 h-96' : 'lg:col-span-4'}`}>
           <div className="absolute inset-0 bg-gradient-to-r from-[#111111] via-transparent to-[#111111] opacity-60 pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent opacity-80 pointer-events-none" />
           <div className="relative z-10 flex h-full flex-col justify-between">
@@ -184,67 +185,112 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="widget-panel col-span-1 flex flex-col p-5 md:col-span-2 lg:col-span-2">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-sm font-semibold text-primary-200">
-              <Activity className="h-4 w-4 text-green-500" />
-              Activity
-            </h3>
-            <span className="text-xs font-medium text-primary-500">Last 6 Weeks</span>
-          </div>
-          <div className="flex flex-1 flex-col justify-end">
-            <div className="grid auto-rows-max grid-cols-7 gap-1.5">
-              {heatmapData.map((item, index) => (
-                <div
-                  key={index}
-                  className={`aspect-square rounded-sm ${
-                    item.level === 0 ? 'bg-[#27272a]' : 'bg-green-500/80'
-                  }`}
-                  title={formatDate(item.date.toDateString())}
-                />
-              ))}
+        {canManageCourses ? (
+          <div className="widget-panel col-span-1 p-5 md:col-span-4 lg:col-span-3 h-96">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-primary-200">
+                <TrendingUp className="h-4 w-4 text-purple-500" />
+                Course Enrollments Overview
+              </h3>
             </div>
-            <div className="mt-4 flex items-center justify-between text-xs font-medium text-primary-500">
-              <span>
-                {activeDaysCount} active day{activeDaysCount !== 1 ? 's' : ''}
-              </span>
-              <span>Inactive / Active</span>
+            {courses.length > 0 ? (
+              <ResponsiveContainer width="100%" height="90%">
+                <BarChart data={courses} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                  <XAxis 
+                    dataKey="title" 
+                    stroke="#a1a1aa" 
+                    fontSize={12} 
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => value.length > 15 ? value.substring(0, 15) + '...' : value}
+                  />
+                  <YAxis 
+                    stroke="#a1a1aa" 
+                    fontSize={12} 
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                  />
+                  <Tooltip 
+                    cursor={{ fill: '#27272a', opacity: 0.4 }}
+                    contentStyle={{ backgroundColor: '#111111', borderColor: '#27272a', borderRadius: '12px' }}
+                    itemStyle={{ color: '#fff' }}
+                  />
+                  <Bar dataKey="enrollmentCount" name="Enrolled Students" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full items-center justify-center text-primary-500">
+                No course data available for analytics.
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="widget-panel col-span-1 flex flex-col p-5 md:col-span-2 lg:col-span-2">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="flex items-center gap-2 text-sm font-semibold text-primary-200">
+                  <Activity className="h-4 w-4 text-green-500" />
+                  Activity
+                </h3>
+                <span className="text-xs font-medium text-primary-500">Last 6 Weeks</span>
+              </div>
+              <div className="flex flex-1 flex-col justify-end">
+                <div className="grid auto-rows-max grid-cols-7 gap-1.5">
+                  {heatmapData.map((item, index) => (
+                    <div
+                      key={index}
+                      className={`aspect-square rounded-[3px] ${
+                        item.level === 0 ? 'bg-[#27272a]' : 'bg-green-500/80'
+                      }`}
+                      title={formatDate(item.date.toDateString())}
+                    />
+                  ))}
+                </div>
+                <div className="mt-4 flex items-center justify-between text-xs font-medium text-primary-500">
+                  <span>
+                    {activeDaysCount} active day{activeDaysCount !== 1 ? 's' : ''}
+                  </span>
+                  <span>Inactive / Active</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div className="widget-panel col-span-1 p-5 md:col-span-2 lg:col-span-2">
-          <div className="mb-2 flex items-center gap-3">
-            <Trophy className="h-5 w-5 text-yellow-500" />
-            <h3 className="text-sm font-semibold text-primary-200">Passed Quizzes</h3>
-          </div>
-          <p className="mb-1 text-2xl font-bold text-white">{passedQuizzes}</p>
-          <p className="text-xs text-primary-500">Score of 60% or higher</p>
-        </div>
+            <div className="widget-panel col-span-1 p-5 md:col-span-2 lg:col-span-2">
+              <div className="mb-2 flex items-center gap-3">
+                <Trophy className="h-5 w-5 text-yellow-500" />
+                <h3 className="text-sm font-semibold text-primary-200">Passed Quizzes</h3>
+              </div>
+              <p className="mb-1 text-2xl font-bold text-white">{passedQuizzes}</p>
+              <p className="text-xs text-primary-500">Score of 60% or higher</p>
+            </div>
 
-        <div className="widget-panel col-span-1 p-5 md:col-span-2 lg:col-span-2">
-          <div className="mb-2 flex items-center gap-3">
-            <Clock className="h-5 w-5 text-blue-500" />
-            <h3 className="text-sm font-semibold text-primary-200">Quiz Attempts</h3>
-          </div>
-          <p className="mb-1 text-2xl font-bold text-white">{quizResults.length}</p>
-          <p className="text-xs text-primary-500">Completed assessments</p>
-        </div>
+            <div className="widget-panel col-span-1 p-5 md:col-span-2 lg:col-span-2">
+              <div className="mb-2 flex items-center gap-3">
+                <Clock className="h-5 w-5 text-blue-500" />
+                <h3 className="text-sm font-semibold text-primary-200">Quiz Attempts</h3>
+              </div>
+              <p className="mb-1 text-2xl font-bold text-white">{quizResults.length}</p>
+              <p className="text-xs text-primary-500">Completed assessments</p>
+            </div>
 
-        <div className="widget-panel col-span-1 p-5 md:col-span-2 lg:col-span-2">
-          <div className="mb-2 flex items-center gap-3">
-            <TrendingUp className="h-5 w-5 text-purple-500" />
-            <h3 className="text-sm font-semibold text-primary-200">Average Score</h3>
-          </div>
-          <p className="mb-1 text-2xl font-bold text-white">
-            {quizResults.length > 0 ? `${averageScore}%` : '—'}
-          </p>
-          <p className="text-xs text-primary-500">
-            {quizResults.length > 0
-              ? `Across ${quizResults.length} attempt${quizResults.length !== 1 ? 's' : ''}`
-              : 'No quiz data yet'}
-          </p>
-        </div>
+            <div className="widget-panel col-span-1 p-5 md:col-span-2 lg:col-span-2">
+              <div className="mb-2 flex items-center gap-3">
+                <TrendingUp className="h-5 w-5 text-purple-500" />
+                <h3 className="text-sm font-semibold text-primary-200">Average Score</h3>
+              </div>
+              <p className="mb-1 text-2xl font-bold text-white">
+                {quizResults.length > 0 ? `${averageScore}%` : '—'}
+              </p>
+              <p className="text-xs text-primary-500">
+                {quizResults.length > 0
+                  ? `Across ${quizResults.length} attempt${quizResults.length !== 1 ? 's' : ''}`
+                  : 'No quiz data yet'}
+              </p>
+            </div>
+          </>
+        )}
 
         <div className="col-span-1 mt-4 md:col-span-4 lg:col-span-6">
           <div className="mb-4 flex items-center justify-between">
@@ -278,17 +324,20 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 items-stretch">
               {canManageCourses
                 ? courses.slice(0, 4).map((course) => (
-                    <CourseCard key={course._id} course={course} isEnrolled={false} />
+                    <div key={course._id} className="flex h-full">
+                      <CourseCard course={course} isEnrolled={false} />
+                    </div>
                   ))
                 : enrollments.slice(0, 4).map((enrollment) => (
-                    <CourseCard
-                      key={enrollment._id}
-                      course={enrollment.course as Course}
-                      isEnrolled
-                    />
+                    <div key={enrollment._id} className="flex h-full">
+                      <CourseCard
+                        course={enrollment.course as Course}
+                        isEnrolled
+                      />
+                    </div>
                   ))}
             </div>
           )}
