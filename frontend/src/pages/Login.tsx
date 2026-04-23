@@ -5,7 +5,7 @@ import { GraduationCap, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react
 import toast from 'react-hot-toast';
 import { getApiError } from '../utils/apiErrorHandler';
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +15,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await login(email, password);
+      await login(identifier, password);
       toast.success('Welcome back!');
       navigate('/dashboard');
     } catch (error) {
@@ -86,16 +86,16 @@ const Login: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-primary-300 mb-2">
-                Email Address
+                Email or Username
               </label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-500" />
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   className="input-field pl-12"
-                  placeholder="you@example.com"
+                  placeholder="you@example.com or username"
                   required
                 />
               </div>

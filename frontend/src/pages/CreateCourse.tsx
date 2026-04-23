@@ -133,7 +133,7 @@ const CreateCourse: React.FC = () => {
                         const url = await userService.uploadThumbnail(file);
                         setThumbnail(url);
                         toast.success('Image uploaded successfully');
-                      } catch (error) {
+                      } catch {
                         toast.error('Failed to upload image');
                       } finally {
                         setIsLoading(false);
@@ -166,7 +166,7 @@ const CreateCourse: React.FC = () => {
       </div>
       <div className="relative flex flex-col items-center justify-center overflow-hidden bg-grid p-8 md:p-12">
         <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent pointer-events-none" />
-        <div className="text-center mb-8 z-10 w-full max-w-2xl text-left">
+        <div className="mb-8 z-10 w-full max-w-2xl text-left">
           <div className="text-[10px] text-primary-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
             <Layout className="w-4 h-4" /> Live Preview
           </div>

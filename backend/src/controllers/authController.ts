@@ -5,8 +5,8 @@ import { ApiResponse } from '../utils/ApiResponse';
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, email, password, role } = req.body;
-      const result = await container.authService.register(name, email, password, role);
+      const { name, username, email, password, role } = req.body;
+      const result = await container.authService.register(name, username, email, password, role);
       ApiResponse.created(res, result, 'Registration successful');
     } catch (error) {
       next(error);
@@ -14,8 +14,8 @@ export class AuthController {
   }
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body;
-      const result = await container.authService.login(email, password);
+      const { identifier, password } = req.body;
+      const result = await container.authService.login(identifier, password);
       ApiResponse.success(res, result, 'Login successful');
     } catch (error) {
       next(error);

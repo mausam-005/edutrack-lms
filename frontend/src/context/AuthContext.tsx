@@ -12,8 +12,8 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
+  register: (name: string, username: string, email: string, password: string, role: string) => Promise<void>;
   logout: () => void;
   updateUser: (updatedUser: User) => void;
   enrollments: Enrollment[];
@@ -92,8 +92,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, [user]);
 
-  const login = async (email: string, password: string) => {
-    const { user: userData, token: authToken } = await authService.login(email, password);
+  const login = async (identifier: string, password: string) => {
+    const { user: userData, token: authToken } = await authService.login(identifier, password);
     // Assign a random avatar if none exists
     if (!userData.avatar) {
       userData.avatar = `${AVATAR_API}${encodeURIComponent(userData.name)}`;
@@ -114,8 +114,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setEnrollments([]);
     }
   };
-  const register = async (name: string, email: string, password: string, role: string) => {
-    const { user: userData, token: authToken } = await authService.register(name, email, password, role);
+  const register = async (name: string, username: string, email: string, password: string, role: string) => {
+    const { user: userData, token: authToken } = await authService.register(name, username, email, password, role);
     // Assign a random avatar for new users
     if (!userData.avatar) {
       userData.avatar = `${AVATAR_API}${encodeURIComponent(userData.name)}`;

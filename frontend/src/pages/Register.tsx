@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { getApiError } from '../utils/apiErrorHandler';
 const Register: React.FC = () => {
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'student' | 'teacher'>('student');
@@ -21,7 +22,7 @@ const Register: React.FC = () => {
     }
     setIsLoading(true);
     try {
-      await register(name, email, password, role);
+      await register(name, username, email, password, role);
       toast.success('Account created successfully!');
       navigate('/dashboard');
     } catch (error) {
@@ -85,6 +86,22 @@ const Register: React.FC = () => {
                   onChange={(e) => setName(e.target.value)}
                   className="input-field pl-12"
                   placeholder="John Doe"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-primary-300 mb-2">
+                Username
+              </label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-500" />
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, '_'))}
+                  className="input-field pl-12"
+                  placeholder="johndoe_23"
                   required
                 />
               </div>

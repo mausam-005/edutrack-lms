@@ -79,11 +79,11 @@ export class CourseController {
 
   static async addCollaborator(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const { email } = req.body;
+      const { identifier } = req.body;
       const course = await container.courseService.addCollaborator(
         req.params.id,
         req.user!._id.toString(),
-        email
+        identifier
       );
       ApiResponse.success(res, { course }, 'Collaborator added successfully');
     } catch (error) {

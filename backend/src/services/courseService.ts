@@ -125,7 +125,7 @@ export class CourseService {
     return Course.distinct('category').exec();
   }
 
-  async addCollaborator(courseId: string, teacherId: string, collaboratorEmail: string): Promise<ICourse> {
+  async addCollaborator(courseId: string, teacherId: string, identifier: string): Promise<ICourse> {
     const course = await this.getById(courseId);
     
     const mainTeacherId = course.teacher._id?.toString() || course.teacher.toString();
@@ -134,10 +134,13 @@ export class CourseService {
     }
 
     const { User } = require('../models/User');
-    const collaborator = await User.findOne({ email: collaboratorEmail, role: 'teacher' });
+    const collaborator = await User.findOne({ 
+      $or: [{ email: identifier }, { username: identifier }],
+      role: 'teacher' 
+    });
     
     if (!collaborator) {
-      throw ApiError.notFound('Teacher not found with this email');
+      throw ApiError.notFound('Teacher not found with this email or username');
     }
 
     if (mainTeacherId === collaborator._id.toString()) {

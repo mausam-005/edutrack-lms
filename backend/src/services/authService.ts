@@ -15,18 +15,25 @@ export class AuthService {
 
   async register(
     name: string,
+    username: string,
     email: string,
     password: string,
     role: 'student' | 'teacher' = 'student'
   ): Promise<{ user: IUser; token: string }> {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
       throw ApiError.conflict('User with this email already exists');
+    }
+
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      throw ApiError.conflict('Username is already taken');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       name,
+      username,
       email,
       password: hashedPassword,
       role
@@ -50,10 +57,12 @@ export class AuthService {
   }
 
   async login(
-    email: string,
+    identifier: string, // Email or Username
     password: string
   ): Promise<{ user: IUser; token: string }> {
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { username: identifier }]
+    }).select('+password');
     if (!user) {
       throw ApiError.unauthorized('Invalid email or password');
     }
@@ -67,11 +76,11 @@ export class AuthService {
     const userObj = user.toObject();
     delete (userObj as any).password;
 
-    this.logger.info(`User logged in: ${email}`);
+    this.logger.info(`User logged in: ${identifier}`);
     
     await eventBus.publish(AppEvents.USER_LOGGED_IN, {
       userId: user._id,
-      email,
+      email: user.email,
     });
 
     return { user: userObj as IUser, token };

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
-  BookOpen,
   ClipboardList,
   Clock,
   ExternalLink,
@@ -14,7 +13,6 @@ import {
   Trash2,
   Users,
   ArrowLeft,
-  X,
   Settings,
   Upload,
   Image as ImageIcon,
@@ -56,7 +54,8 @@ const CourseDetails: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [students, setStudents] = useState<any[]>([]);
+  const [students, setStudents] = useState<{ _id: string; student: { _id: string; name: string; username: string; email: string; avatar?: string }; progress: number; enrolledAt: string }[]>([]);
+  const [studentSearch, setStudentSearch] = useState('');
 
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
@@ -302,10 +301,10 @@ const CourseDetails: React.FC = () => {
     }
   };
 
-  const updateQuestion = (index: number, updater: (current: any) => any) => {
-    setQuizForm((current) => ({
-      ...current,
-      questions: current.questions.map((q, i) => (i === index ? updater(q) : q)),
+  const updateQuestion = (idx: number, updater: (q: { questionText: string; options: string[]; correctAnswer: number }) => { questionText: string; options: string[]; correctAnswer: number }) => {
+    setQuizForm(p => ({
+      ...p,
+      questions: p.questions.map((q, i) => i === idx ? updater(q) : q)
     }));
   };
 
@@ -341,12 +340,12 @@ const CourseDetails: React.FC = () => {
         courseId={id!}
       />
 
-      <div className={classNames("grid gap-8", {
+      <div className={classNames("grid gap-8 items-stretch", {
         "lg:grid-cols-[300px_1fr]": activeItem !== 'edit-course',
         "lg:grid-cols-1": activeItem === 'edit-course'
       })}>
         {activeItem !== 'edit-course' && (
-          <aside className="widget-panel self-start p-5 lg:sticky lg:top-24 max-h-[calc(100vh-120px)] overflow-y-auto">
+          <aside className="widget-panel p-5 lg:sticky lg:top-24 h-full">
             <button
               onClick={() => navigate(-1)}
               className="mb-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary-500 transition-all hover:text-white group"
@@ -355,7 +354,7 @@ const CourseDetails: React.FC = () => {
               Return
             </button>
 
-            <div className="mb-8 border-b border-[#27272a] pb-6">
+            <div className="mb-6 border-b border-[#27272a] pb-6">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.3em] text-primary-600">
                 Course Engine
               </p>
@@ -440,6 +439,22 @@ const CourseDetails: React.FC = () => {
                         label={`Co-Teachers (${course.collaborators?.length || 0})`}
                       />
                     )}
+                    <div className="pt-2 space-y-1">
+                      <SidebarButton 
+                        isActive={activeItem === 'edit-course'}
+                        onClick={() => setActiveItem('edit-course')}
+                        icon={<Settings className="h-4 w-4" />}
+                        label="Modify Course"
+                      />
+                      {isOwner && (
+                        <button 
+                          onClick={handleDeleteCourse}
+                          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 border border-transparent text-red-400/60 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20"
+                        >
+                          <Trash2 className="h-4 w-4" /> Archive Course
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -466,52 +481,46 @@ const CourseDetails: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                <div className="xl:col-span-2 space-y-8">
-                  <div className="widget-panel p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                <div className="space-y-8 h-full">
+                  <div className="widget-panel p-8 h-full">
                     <h3 className="text-xl font-bold text-white mb-6">Course Syllabus</h3>
                     <p className="text-base leading-relaxed text-primary-300 whitespace-pre-wrap">
                       {course.description}
                     </p>
                   </div>
 
-                  {canManageCourse && (
-                    <div className="flex flex-wrap gap-4">
-                      <button onClick={() => setActiveItem('edit-course')} className="btn-secondary px-8 h-12 gap-2">
-                        <Settings className="w-4.5 h-4.5" /> Modify Course
-                      </button>
-                      {isOwner && (
-                        <button onClick={handleDeleteCourse} className="btn-secondary px-8 h-12 gap-2 text-red-400 border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40">
-                          <Trash2 className="w-4.5 h-4.5" /> Archive Course
-                        </button>
-                      )}
-                    </div>
-                  )}
                 </div>
 
-                <div className="space-y-6">
-                  <div className="widget-panel p-6 divide-y divide-[#27272a]">
-                    <div className="pb-4">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-primary-500 mb-2">Registration Status</p>
-                      {user?.role === 'student' && !isEnrolled ? (
-                        <button onClick={handleEnroll} disabled={enrolling} className="btn-primary w-full h-12 shadow-xl shadow-primary-500/10">
-                          {enrolling ? 'Processing...' : 'Enroll in Course'}
-                        </button>
-                      ) : (
-                        <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm bg-emerald-500/5 py-2 px-4 rounded-2xl border border-emerald-500/20">
-                          <PlayCircle className="w-4 h-4" /> {isEnrolled ? 'Currently Enrolled' : 'Manager View'}
-                        </div>
-                      )}
-                    </div>
-                    <div className="py-4 space-y-3">
-                       <MetaItem icon={<Users className="w-4 h-4" />} label="Students" value={course.enrollmentCount} />
-                       <MetaItem icon={<Clock className="w-4 h-4" />} label="Last Updated" value={formatDate(course.updatedAt)} />
-                       <MetaItem icon={<BarChart className="w-4 h-4" />} label="Complexity" value="Beginner-Friendly" />
+                <div className="h-full">
+                  <div className="widget-panel p-8 h-full flex flex-col">
+                    {((user?.role === 'student' && !isEnrolled) || isEnrolled) && (
+                      <div className="mb-8">
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-primary-500 mb-5">Status & Enrollment</h4>
+                        {user?.role === 'student' && !isEnrolled ? (
+                          <button onClick={handleEnroll} disabled={enrolling} className="btn-primary w-full h-14 text-base shadow-2xl shadow-primary-500/20">
+                            {enrolling ? 'Processing...' : 'Enroll in Course'}
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-center gap-3 text-emerald-400 font-bold text-sm bg-emerald-500/5 h-14 px-6 rounded-2xl border border-emerald-500/20 shadow-inner">
+                            <PlayCircle className="w-5 h-5" /> Currently Enrolled
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className=" border-[#27272a] mt-auto">
+                       <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-primary-500 mb-5">Course Metrics</h4>
+                       <div className="grid grid-cols-1 gap-4">
+                       <MetaCard icon={<Users className="w-4.5 h-4.5" />} label="Active Students" value={course.enrollmentCount} />
+                       <MetaCard icon={<Clock className="w-4.5 h-4.5" />} label="Last Activity" value={formatDate(course.updatedAt)} />
+                       <MetaCard icon={<BarChart className="w-4.5 h-4.5" />} label="Course Level" value="Beginner-Friendly" />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
           )}
 
           {activeItem === 'edit-course' && canManageCourse && (
@@ -520,7 +529,7 @@ const CourseDetails: React.FC = () => {
                  <ArrowLeft className="w-4 h-4" /> Back to Dashboard
                </button>
                
-               <form onSubmit={handleUpdateCourse} className="grid lg:grid-cols-[1fr_400px] gap-8 items-center">
+               <form onSubmit={handleUpdateCourse} className="grid lg:grid-cols-[1fr_400px] gap-8 items-start">
                   <div className="widget-panel p-8 space-y-8">
                     <div className="border-b border-[#27272a] pb-6">
                       <h2 className="text-3xl font-black text-white">Course Configuration</h2>
@@ -597,11 +606,23 @@ const CourseDetails: React.FC = () => {
 
           {activeItem === 'students' && canManageCourse && (
             <div className="widget-panel overflow-hidden animate-slide-up">
-              <div className="border-b border-[#27272a] p-8">
-                <h2 className="text-2xl font-black text-white">Student Roster</h2>
-                <p className="mt-1 text-sm text-primary-500 font-medium">
-                  {students.length} learner{students.length !== 1 ? 's' : ''} currently enrolled.
-                </p>
+              <div className="border-b border-[#27272a] p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div>
+                  <h2 className="text-2xl font-black text-white">Student Roster</h2>
+                  <p className="mt-1 text-sm text-primary-500 font-medium">
+                    {students.length} learner{students.length !== 1 ? 's' : ''} currently enrolled.
+                  </p>
+                </div>
+                <div className="relative w-full sm:w-72">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-600" />
+                  <input
+                    type="text"
+                    placeholder="Search by name, email, or username..."
+                    value={studentSearch}
+                    onChange={(e) => setStudentSearch(e.target.value)}
+                    className="input-field h-11 pl-11 text-xs"
+                  />
+                </div>
               </div>
 
               {students.length === 0 ? (
@@ -620,7 +641,13 @@ const CourseDetails: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#27272a]">
-                      {students.map((e: any) => (
+                      {students
+                        .filter(e => 
+                          e.student.name.toLowerCase().includes(studentSearch.toLowerCase()) || 
+                          e.student.email.toLowerCase().includes(studentSearch.toLowerCase()) ||
+                          e.student.username?.toLowerCase().includes(studentSearch.toLowerCase())
+                        )
+                        .map((e) => (
                         <tr key={e._id} className="group transition-colors hover:bg-[#1d1d20]/30">
                           <td className="px-8 py-6">
                             <div className="flex items-center gap-4">
@@ -631,7 +658,10 @@ const CourseDetails: React.FC = () => {
                                 <button onClick={() => navigate(`/profile/${e.student?._id}`)} className="font-bold text-white hover:text-primary-400 transition-colors">
                                   {e.student?.name}
                                 </button>
-                                <p className="text-xs text-primary-500 font-medium">{e.student?.email}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-xs text-primary-500 font-medium">{e.student?.email}</p>
+                                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary-500/10 text-primary-400 border border-primary-500/20 font-bold tracking-tight">@{e.student?.username}</span>
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -655,23 +685,23 @@ const CourseDetails: React.FC = () => {
             <div className="widget-panel overflow-hidden animate-slide-up">
               <div className="border-b border-[#27272a] p-8 bg-gradient-to-r from-[#1d1d20]/30 to-transparent">
                 <h2 className="text-2xl font-black text-white">Instructional Team</h2>
-                <p className="mt-1 text-sm text-primary-500 font-medium">Manage educators who share administrative rights for this course.</p>
+                <p className="mt-1 text-sm text-primary-500 font-medium">Manage educators who share administrative rights for this course. Search by email or unique username.</p>
               </div>
 
               <div className="p-8 border-b border-[#27272a] bg-[#111111]/50">
-                <form onSubmit={handleAddCollaborator} className="flex gap-4 max-w-xl">
-                  <div className="flex-1 relative">
+                <form onSubmit={handleAddCollaborator} className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4 w-full">
+                  <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-600" />
                     <input
-                      type="email"
-                      placeholder="Collaborator's email address..."
+                      type="text"
+                      placeholder="Collaborator's email or username..."
                       value={collaboratorEmail}
                       onChange={(e) => setCollaboratorEmail(e.target.value)}
                       className="input-field h-12 pl-11"
                       required
                     />
                   </div>
-                  <button type="submit" disabled={isAddingCollaborator || !collaboratorEmail.trim()} className="btn-primary px-8 h-12 gap-2 shrink-0">
+                  <button type="submit" disabled={isAddingCollaborator || !collaboratorEmail.trim()} className="btn-primary px-10 h-12 gap-2 w-full sm:w-auto shadow-lg shadow-primary-500/20">
                     <UserPlus className="h-4.5 w-4.5" /> {isAddingCollaborator ? 'Syncing...' : 'Grant Access'}
                   </button>
                 </form>
@@ -686,7 +716,7 @@ const CourseDetails: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#27272a] border-b border-[#27272a]">
-                  {course.collaborators.map((c: any) => (
+                  {course.collaborators.map((c: { _id: string; name: string; email: string; avatar?: string }) => (
                     <div key={c._id} className="bg-[#09090b] flex items-center justify-between p-8 transition-colors hover:bg-[#1d1d20]/30">
                       <div className="flex items-center gap-5">
                         <div className="h-14 w-14 overflow-hidden rounded-2xl border border-[#27272a] bg-[#1d1d20] shadow-lg">
@@ -734,7 +764,7 @@ const CourseDetails: React.FC = () => {
                           <input value={materialForm.title} onChange={e => setMaterialForm(p => ({ ...p, title: e.target.value }))} className="input-field h-12" placeholder="e.g. Week 1 Foundations" required />
                         </Field>
                         <Field label="Content Format">
-                          <select value={materialForm.type} onChange={e => setMaterialForm(p => ({ ...p, type: e.target.value as any }))} className="input-field h-12">
+                          <select value={materialForm.type} onChange={e => setMaterialForm(p => ({ ...p, type: e.target.value as Material['type'] }))} className="input-field h-12">
                             <option value="text">Rich Text Notes</option>
                             <option value="link">External URL</option>
                             <option value="pdf">Document Link (PDF)</option>
@@ -828,7 +858,7 @@ const CourseDetails: React.FC = () => {
                                   {q.options.map((opt, optIdx) => (
                                     <div key={optIdx} className="space-y-2">
                                        <label className="text-[9px] font-bold uppercase tracking-widest text-primary-600">Option {String.fromCharCode(65 + optIdx)}</label>
-                                       <input value={opt} onChange={e => updateQuestion(idx, p => ({ ...p, options: p.options.map((o: any, i: number) => i === optIdx ? e.target.value : o) }))} className="input-field h-11 text-xs" required />
+                                       <input value={opt} onChange={e => updateQuestion(idx, p => ({ ...p, options: p.options.map((o: string, i: number) => i === optIdx ? e.target.value : o) }))} className="input-field h-11 text-xs" required />
                                     </div>
                                   ))}
                                </div>
@@ -916,9 +946,9 @@ const SidebarButton: React.FC<{ isActive: boolean; onClick: () => void; icon: Re
   <button
     onClick={onClick}
     className={classNames(
-      'flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-bold transition-all duration-300 border',
+      'flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 border',
       {
-        'bg-white text-black border-white shadow-xl shadow-white/5': isActive,
+        'bg-white text-black border-white shadow-lg shadow-white/5': isActive,
         'text-primary-400 border-transparent hover:bg-[#1d1d20] hover:text-white hover:border-[#27272a]': !isActive,
       }
     )}
@@ -930,7 +960,7 @@ const SidebarButton: React.FC<{ isActive: boolean; onClick: () => void; icon: Re
 );
 
 const SidebarSectionHeader: React.FC<{ label: string; onAction?: () => void }> = ({ label, onAction }) => (
-  <div className="flex items-center justify-between px-3 mb-2">
+  <div className="flex items-center justify-between px-3 mb-2 mt-6 first:mt-0">
     <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary-600">{label}</p>
     {onAction && (
       <button onClick={onAction} className="p-1.5 rounded-xl bg-[#1d1d20] text-primary-400 hover:text-white hover:bg-[#27272a] transition-all border border-[#27272a] shadow-sm">
@@ -940,12 +970,15 @@ const SidebarSectionHeader: React.FC<{ label: string; onAction?: () => void }> =
   </div>
 );
 
-const MetaItem: React.FC<{ icon: React.ReactNode; label: string; value: string | number }> = ({ icon, label, value }) => (
-  <div className="flex items-center justify-between py-1">
-    <div className="flex items-center gap-2.5 text-primary-500 text-[11px] font-bold uppercase tracking-widest">
-      {icon} {label}
+const MetaCard: React.FC<{ icon: React.ReactNode; label: string; value: string | number }> = ({ icon, label, value }) => (
+  <div className="group flex items-center gap-4 bg-[#111111] p-4 rounded-2xl border border-[#27272a] hover:border-primary-500/30 transition-all duration-300">
+    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-500/10 text-primary-400 border border-primary-500/20 group-hover:bg-primary-500 group-hover:text-black transition-colors">
+      {icon}
     </div>
-    <span className="text-xs font-black text-white">{value}</span>
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[9px] font-black uppercase tracking-widest text-primary-600">{label}</span>
+      <span className="text-xs font-bold text-white">{value}</span>
+    </div>
   </div>
 );
 
