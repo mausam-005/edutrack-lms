@@ -19,14 +19,14 @@ A full-stack Learning Management System built with React, Node.js, Express, Type
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, TypeScript, Tailwind CSS 3, Vite |
-| Backend | Node.js, Express.js, TypeScript |
-| Database | MongoDB with Mongoose ODM |
-| Auth | JWT + bcrypt |
-| UI Icons | Lucide React |
-| Notifications | React Hot Toast |
+| Layer         | Technology                                 |
+| ------------- | ------------------------------------------ |
+| Frontend      | React 18, TypeScript, Tailwind CSS 3, Vite |
+| Backend       | Node.js, Express.js, TypeScript            |
+| Database      | MongoDB with Mongoose ODM                  |
+| Auth          | JWT + bcrypt                               |
+| UI Icons      | Lucide React                               |
+| Notifications | React Hot Toast                            |
 
 ## 📦 Project Structure
 
@@ -56,7 +56,7 @@ edutrack-lms/
 └── .env.example
 ```
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -87,20 +87,19 @@ cd backend
 npm run seed
 ```
 
-
 ## 📡 API Endpoints
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | /api/auth/register |  | Register user |
-| POST | /api/auth/login |  | Login |
-| GET | /api/auth/me |  | Get profile |
-| GET | /api/courses |  | List courses (paginated) |
-| POST | /api/courses |  Teacher | Create course |
-| GET | /api/courses/:id |  | Course details |
-| POST | /api/enrollments/courses/:id/enroll |  Student | Enroll |
-| POST | /api/quizzes/:id/attempt |  Student | Submit quiz |
-| GET | /api/quizzes/:id/results | | View results |
+| Method | Endpoint                            | Auth    | Description              |
+| ------ | ----------------------------------- | ------- | ------------------------ |
+| POST   | /api/auth/register                  |         | Register user            |
+| POST   | /api/auth/login                     |         | Login                    |
+| GET    | /api/auth/me                        |         | Get profile              |
+| GET    | /api/courses                        |         | List courses (paginated) |
+| POST   | /api/courses                        | Teacher | Create course            |
+| GET    | /api/courses/:id                    |         | Course details           |
+| POST   | /api/enrollments/courses/:id/enroll | Student | Enroll                   |
+| POST   | /api/quizzes/:id/attempt            | Student | Submit quiz              |
+| GET    | /api/quizzes/:id/results            |         | View results             |
 
 ## 🎨 Design Patterns
 
@@ -109,34 +108,26 @@ npm run seed
 - **Context Provider** — React auth state management
 - **Protected Routes** — HOC with role-based guarding
 
-## UML Diagrams
+## 🏛️ Architecture Explanation
 
-- Link - (https://excalidraw.com/#json=IZuhYg8LoQ4qXGpKE4Any,dbes2XwwHklcriedZ9VgwA)
+EduTrack follows a modern **N-Tier Layered Architecture** with a clear separation of concerns, ensuring scalability and maintainability:
 
-1. EduTrack LMS — High-Level System Architecture
+1.  **Presentation Layer (Frontend)**: A React-based Single Page Application (SPA) utilizing **Context API** for state management and **Axios** for asynchronous communication with the backend.
+2.  **API Gateway / Routing Layer**: Express.js routes that handle request entry points and apply cross-cutting concerns like authentication and role-based validation.
+3.  **Business Logic Layer (Services)**: The core engine of the application where all domain rules are encapsulated (e.g., enrollment logic, quiz scoring).
+4.  **Data Access Layer (Models)**: Mongoose schemas that define the data structures and handle interactions with MongoDB.
+5.  **Cross-Cutting Utilities**: Centralized error handling (`ApiError`), logging (`Logger`), and an asynchronous **EventBus** for decoupled communication between modules.
 
-<img width="813" height="693" alt="Screenshot 2026-04-15 at 8 54 14 PM" src="https://github.com/user-attachments/assets/5af94d79-a2c5-4c56-acb2-a18ef68d6060" />
+## 🛠️ Design Patterns & SOLID Principles
 
+The codebase is built on professional software engineering principles:
 
-2. EduTrack LMS system
-  
-<img width="1253" height="198" alt="Screenshot 2026-04-15 at 8 55 19 PM" src="https://github.com/user-attachments/assets/1d2f8c7e-1e9f-4c14-a219-ec8f6737f8a5" />
-
-
-3. Use Case
-  
-<img width="748" height="687" alt="Screenshot 2026-04-15 at 8 55 52 PM" src="https://github.com/user-attachments/assets/0f417dbc-2a5f-413b-a8a9-ddef29f19792" />
-
-4. Class Diagram
-  
-<img width="801" height="684" alt="Screenshot 2026-04-15 at 8 56 55 PM" src="https://github.com/user-attachments/assets/cebaca9d-994d-47d5-9828-b2ec5d534efa" />
-
-
-5. EduTrack LMS — Sequence Diagram
-  
-<img width="564" height="729" alt="Screenshot 2026-04-15 at 8 58 39 PM" src="https://github.com/user-attachments/assets/1914912c-91ba-434a-a9fb-51cf7b32b118" />
-
-
+- **Singleton Pattern**: Used for the Database connection and the global `EventBus` instance.
+- **Observer Pattern**: Implemented via the `EventBus` to handle decoupled notifications (e.g., notifying students when new materials are added).
+- **Factory Pattern**: Used in the `Logger` utility to instantiate specialized logging instances.
+- **SOLID Implementation**:
+  - **Single Responsibility**: Each service (Course, User, Quiz) handles only one domain area.
+  - **Dependency Inversion**: High-level modules (Services) depend on abstractions (Interfaces) rather than concrete implementations.
 
 ## 👨‍💻 Created By
 
@@ -144,4 +135,39 @@ npm run seed
 - Kavya Saraswat.
 - Mausam Kumar Dwivedi.
 - Rachit Singh.
-- Himank Kaushik.
+- Himank Kaushik.|
+
+## 📊 UML Diagrams
+
+We have documented the system design through the following diagrams:
+
+1.  **System Architecture**: High-level overview of the tech stack integration.
+2.  **Use Case Diagram**: Defines the interactions between Students, Teachers, and Admins.
+3.  **Class Diagram**: Illustrates the OOP relationships between Users, Courses, and Quizzes.
+4.  **Sequence Diagram**: Details the step-by-step workflow for Course Creation.
+
+> [!TIP]
+> All UML diagrams are hosted and can be viewed in high resolution here: [Excalidraw Project Link](https://excalidraw.com/#json=IZuhYg8LoQ4qXGpKE4Any,dbes2XwwHklcriedZ9VgwA)
+
+---
+
+### 🚀 How to Run
+
+1.  **Clone the Repository**.
+2.  **Run Backend**:
+    ```bash
+    cd backend
+    npm install
+    npm run dev
+    ```
+3.  **Run Frontend**:
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
+4.  **Database Seeding** (Optional):
+    ```bash
+    cd backend
+    npm run seed
+    ```
