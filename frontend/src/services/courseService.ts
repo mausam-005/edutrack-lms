@@ -24,4 +24,12 @@ export const courseService = {
     const response = await api.get<ApiResponse<{ categories: string[] }>>('/courses/categories');
     return response.data.data.categories;
   },
+  addCollaborator: async (courseId: string, email: string) => {
+    const response = await api.post<ApiResponse<{ course: Course }>>(`/courses/${courseId}/collaborators`, { email });
+    return response.data.data.course;
+  },
+  removeCollaborator: async (courseId: string, collaboratorId: string) => {
+    const response = await api.delete<ApiResponse<{ course: Course }>>(`/courses/${courseId}/collaborators`, { data: { collaboratorId } });
+    return response.data.data.course;
+  },
 };
