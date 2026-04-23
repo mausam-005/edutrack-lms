@@ -22,7 +22,7 @@ router.post(
 router.post(
   '/login',
   validate([
-    body('email').isEmail().withMessage('Valid email is required'),
+    body('identifier').notEmpty().withMessage('Email or Username is required'),
     body('password').notEmpty().withMessage('Password is required'),
   ]),
   AuthController.login
